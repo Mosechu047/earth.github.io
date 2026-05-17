@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earthmoney Clothing Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: #1e3a2f;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo h2 {
+            font-size: 1.5rem;
+        }
+
+        .logo span {
+            color: #c5a86a;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: #2f5e4a;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn {
+            background: #dc2626;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .logout-btn:hover {
+            background: #b91c1c;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Login Page Styles */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+
+        .logo-icon i {
+            font-size: 35px;
+            color: white;
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            color: #333;
+        }
+
+        .login-header h1 span {
+            color: #667eea;
+        }
+
+        .login-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .success-message {
+            background: #efe;
+            color: #3c3;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* Dashboard Styles */
+        .welcome-section h1 {
+            color: #1e3a2f;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon i {
+            font-size: 30px;
+            color: white;
+        }
+
+        .stat-info h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e3a2f;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .card h2 {
+            color: #1e3a2f;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .profit-preview {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .profit-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: #1e3a2f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .delivery-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .profit-positive {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .profit-negative {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f9fafb;
+            font-weight: 600;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Dynamic content will be loaded here -->
+    </div>
+
+    <script type="module">
+        // Firebase imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyA6PKRSstZhiWFVDThYRktFQdf5BnPgX7w",
+            authDomain: "earthmn-d094d.firebaseapp.com",
+            projectId: "earthmn-d094d",
+            storageBucket: "earthmn-d094d.firebasestorage.app",
+            messagingSenderId: "385563967965",
+            appId: "1:385563967965:web:abe9258b0500d623ea7634",
+            measurementId: "G-LCMCXJ7FCW"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const ORDERS_COLLECTION = "earthmoney_orders";
+        const CLIENTS_COLLECTION = "earthmoney_clients";
+
+        let currentUser = null;
+
+        // Helper function to format currency
+        function formatKES(amount) {
+            return `KES ${amount.toLocaleString()}`;
+        }
+
+        // Check auth state
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                showDashboard();
+            } else {
+                showLoginPage();
+            }
+        });
+
+        // Show Login Page
+        function showLoginPage() {
+            document.getElementById('app').innerHTML = `
+                <div class="login-container">
+                    <div class="login-card">
+                        <div class="login-header">
+                            <div class="logo-icon">
+                                <i class="fas fa-tshirt"></i>
+                            </div>
+                            <h1>Earthmoney <span>Clothing</span></h1>
+                            <p>Management System</p>
+                        </div>
+                        
+                        <div class="login-tabs">
+                            <button class="tab-btn active" data-tab="login">Login</button>
+                            <button class="tab-btn" data-tab="register">Sign Up</button>
+                        </div>
+
+                        <div id="loginForm" class="tab-content active">
+                            <form id="loginUserForm">
+                                <div class="input-group">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" id="loginEmail" placeholder="Email Address" required>
+                                </div>
+                                <div class="input-group">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="loginPassword" placeholder="Password" required>
+                                </div>
+                                <button type="submit" class="login-btn">Login</button>
+                            </form>
+                        </div>
+
+                        <div id="registerForm" class="tab-content">
+                            <form id="registerUserForm">
+                                <div class="input-group">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="regName" placeholder="Full Name" required>
+                                </div>
+                                <div class="input-group">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" id="regEmail" placeholder="Email Address" required>
+                                </div>
+                                <div class="input-group">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="regPassword" placeholder="Password (min 6 characters)" required>
+                                </div>
+                                <div class="input-group">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required>
+                                </div>
+                                <button type="submit" class="login-btn">Create Account</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Tab switching
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tab = btn.dataset.tab;
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById(`${tab}Form`).classList.add('active');
+                });
+            });
+
+            // Login handler
+            document.getElementById('loginUserForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                } catch (error) {
+                    alert('Login failed: ' + error.message);
+                }
+            });
+
+            // Register handler
+            document.getElementById('registerUserForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('regName').value;
+                const email = document.getElementById('regEmail').value;
+                const password = document.getElementById('regPassword').value;
+                const confirmPassword = document.getElementById('regConfirmPassword').value;
+                
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    alert('Password must be at least 6 characters');
+                    return;
+                }
+                
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    await updateProfile(userCredential.user, { displayName: name });
+                } catch (error) {
+                    alert('Registration failed: ' + error.message);
+                }
+            });
+        }
+
+        // Show Main App (Dashboard)
+        async function showDashboard() {
+            // Load clients and orders data
+            const clients = await loadClients();
+            const orders = await loadOrders();
+            
+            // Calculate totals
+            let totalRevenue = 0, totalExpenditure = 0, totalProfit = 0;
+            orders.forEach(order => {
+                const revenue = order.productCost || 0;
+                const expense = order.businessExpenditure || 0;
+                totalRevenue += revenue;
+                totalExpenditure += expense;
+                totalProfit += revenue - expense;
+            });
+            
+            const profitMargin = totalRevenue > 0 ? ((totalProfit / totalRevenue) * 100).toFixed(1) : 0;
+            
+            // Upcoming deliveries
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const upcoming = orders.filter(order => {
+                if (!order.dateOfDelivery) return false;
+                return new Date(order.dateOfDelivery) >= today;
+            }).sort((a, b) => new Date(a.dateOfDelivery) - new Date(b.dateOfDelivery)).slice(0, 5);
+            
+            // Recent orders
+            const recentOrders = [...orders].sort((a, b) => {
+                const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+                const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+                return dateB - dateA;
+            }).slice(0, 10);
+            
+            document.getElementById('app').innerHTML = `
+                <nav class="navbar">
+                    <div class="logo">
+                        <h2><i class="fas fa-tshirt"></i> Earthmoney <span>Clothing</span></h2>
+                    </div>
+                    <div class="nav-links">
+                        <a class="active" data-page="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+                        <a data-page="orders"><i class="fas fa-shopping-bag"></i> Orders</a>
+                        <a data-page="register"><i class="fas fa-plus-circle"></i> Register Order</a>
+                        <a data-page="addclient"><i class="fas fa-user-plus"></i> Add Client</a>
+                    </div>
+                    <div class="user-info">
+                        <span><i class="fas fa-user"></i> ${currentUser?.displayName || currentUser?.email}</span>
+                        <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    </div>
+                </nav>
+
+                <div class="container">
+                    <div class="welcome-section">
+                        <h1>Financial Dashboard</h1>
+                        <p>Track your business performance in Kenyan Shillings (KES)</p>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Revenue</h3>
+                                <p class="stat-value">${formatKES(totalRevenue)}</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Expenditure</h3>
+                                <p class="stat-value">${formatKES(totalExpenditure)}</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-chart-simple"></i></div>
+                            <div class="stat-info">
+                                <h3>Net Profit</h3>
+                                <p class="stat-value" style="color: ${totalProfit >= 0 ? '#10b981' : '#ef4444'}">${formatKES(totalProfit)}</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-chart-pie"></i></div>
+                            <div class="stat-info">
+                                <h3>Profit Margin</h3>
+                                <p class="stat-value">${profitMargin}%</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="card">
+                            <h2><i class="fas fa-calendar-alt"></i> Upcoming Deliveries</h2>
+                            <div id="upcomingDeliveries">
+                                ${upcoming.map(order => {
+                                    const profit = (order.productCost || 0) - (order.businessExpenditure || 0);
+                                    const clientName = order.clientId ? (clients[order.clientId] || 'Unknown') : (order.clientNameRaw || 'Walk-in');
+                                    return `
+                                        <div class="delivery-item">
+                                            <div><strong>${order.orderNo || order.id.slice(-6)}</strong><br><small>${clientName}</small></div>
+                                            <div>${new Date(order.dateOfDelivery).toLocaleDateString()}</div>
+                                            <div class="${profit >= 0 ? 'profit-positive' : 'profit-negative'}">${formatKES(profit)}</div>
+                                        </div>
+                                    `;
+                                }).join('') || '<p style="text-align:center; padding: 2rem;">No upcoming deliveries</p>'}
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h2><i class="fas fa-chart-bar"></i> Performance Summary</h2>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #eee;">
+                                    <span><strong>Total Orders:</strong></span>
+                                    <span>${orders.length}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #eee;">
+                                    <span><strong>Profitable Orders:</strong></span>
+                                    <span style="color: #10b981;">${orders.filter(o => (o.productCost || 0) > (o.businessExpenditure || 0)).length}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.75rem 0;">
+                                    <span><strong>Loss Orders:</strong></span>
+                                    <span style="color: #ef4444;">${orders.filter(o => (o.productCost || 0) < (o.businessExpenditure || 0)).length}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2><i class="fas fa-chart-line"></i> Recent Orders</h2>
+                        <div class="table-container">
+                            ${recentOrders.length === 0 ? '<p style="text-align:center; padding: 2rem;">No orders yet. Click "Register Order" to create one.</p>' : `
+                                <table>
+                                    <thead>
+                                        <tr><th>Order No</th><th>Client</th><th>Delivery Date</th><th>Revenue</th><th>Expense</th><th>Profit</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        ${recentOrders.map(order => {
+                                            const revenue = order.productCost || 0;
+                                            const expense = order.businessExpenditure || 0;
+                                            const profit = revenue - expense;
+                                            const clientName = order.clientId ? (clients[order.clientId] || 'Unknown') : (order.clientNameRaw || 'Walk-in');
+                                            return `<tr>
+                                                <td><strong>${order.orderNo || order.id.slice(-6)}</strong></td>
+                                                <td>${clientName}</td>
+                                                <td>${order.dateOfDelivery ? new Date(order.dateOfDelivery).toLocaleDateString() : 'N/A'}</td>
+                                                <td>${formatKES(revenue)}</td>
+                                                <td>${formatKES(expense)}</td>
+                                                <td class="${profit >= 0 ? 'profit-positive' : 'profit-negative'}">${formatKES(profit)}</td>
+                                            </tr>`;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Navigation
+            document.querySelectorAll('[data-page]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const page = link.dataset.page;
+                    if (page === 'dashboard') showDashboard();
+                    else if (page === 'orders') showOrdersPage();
+                    else if (page === 'register') showRegisterOrderPage();
+                    else if (page === 'addclient') showAddClientPage();
+                });
+            });
+            
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                await signOut(auth);
+            });
+        }
+        
+        async function loadClients() {
+            const snapshot = await getDocs(collection(db, CLIENTS_COLLECTION));
+            const clients = {};
+            snapshot.forEach(doc => {
+                clients[doc.id] = doc.data().clientName;
+            });
+            return clients;
+        }
+        
+        async function loadOrders() {
+            const snapshot = await getDocs(collection(db, ORDERS_COLLECTION));
+            const orders = [];
+            snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
+            return orders;
+        }
+        
+        async function showOrdersPage() {
+            const orders = await loadOrders();
+            const clients = await loadClients();
+            
+            document.getElementById('app').innerHTML = `
+                <nav class="navbar">
+                    <div class="logo"><h2><i class="fas fa-tshirt"></i> Earthmoney <span>Clothing</span></h2></div>
+                    <div class="nav-links">
+                        <a data-page="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+                        <a class="active" data-page="orders"><i class="fas fa-shopping-bag"></i> Orders</a>
+                        <a data-page="register"><i class="fas fa-plus-circle"></i> Register Order</a>
+                        <a data-page="addclient"><i class="fas fa-user-plus"></i> Add Client</a>
+                    </div>
+                    <div class="user-info">
+                        <span><i class="fas fa-user"></i> ${currentUser?.displayName || currentUser?.email}</span>
+                        <button id="logoutBtn" class="logout-btn">Logout</button>
+                    </div>
+                </nav>
+                <div class="container">
+                    <div class="card">
+                        <h1>All Orders</h1>
+                        <div class="table-container">
+                            ${orders.length === 0 ? '<p style="text-align:center; padding: 2rem;">No orders yet. Click "Register Order" to create one.</p>' : `
+                                <table>
+                                    <thead><tr><th>Order No</th><th>Client</th><th>Delivery Date</th><th>Revenue</th><th>Expense</th><th>Profit</th><th>Action</th></tr></thead>
+                                    <tbody>
+                                        ${orders.map(order => {
+                                            const revenue = order.productCost || 0;
+                                            const expense = order.businessExpenditure || 0;
+                                            const profit = revenue - expense;
+                                            const clientName = order.clientId ? (clients[order.clientId] || 'Unknown') : (order.clientNameRaw || 'Walk-in');
+                                            return `<tr>
+                                                <td>${order.orderNo || order.id.slice(-6)}</td>
+                                                <td>${clientName}</td>
+                                                <td>${order.dateOfDelivery ? new Date(order.dateOfDelivery).toLocaleDateString() : 'N/A'}</td>
+                                                <td>${formatKES(revenue)}</td>
+                                                <td>${formatKES(expense)}</td>
+                                                <td class="${profit >= 0 ? 'profit-positive' : 'profit-negative'}">${formatKES(profit)}</td>
+                                                <td><button class="delete-btn" data-id="${order.id}">Delete</button></td>
+                                            </tr>`;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Delete handlers
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    if (confirm('Delete this order?')) {
+                        await deleteDoc(doc(db, ORDERS_COLLECTION, btn.dataset.id));
+                        showOrdersPage();
+                    }
+                });
+            });
+            
+            // Navigation
+            document.querySelectorAll('[data-page]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const page = link.dataset.page;
+                    if (page === 'dashboard') showDashboard();
+                    else if (page === 'orders') showOrdersPage();
+                    else if (page === 'register') showRegisterOrderPage();
+                    else if (page === 'addclient') showAddClientPage();
+                });
+            });
+            
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                await signOut(auth);
+            });
+        }
+        
+        async function showRegisterOrderPage() {
+            const clients = await loadClients();
+            
+            document.getElementById('app').innerHTML = `
+                <nav class="navbar">
+                    <div class="logo"><h2><i class="fas fa-tshirt"></i> Earthmoney <span>Clothing</span></h2></div>
+                    <div class="nav-links">
+                        <a data-page="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+                        <a data-page="orders"><i class="fas fa-shopping-bag"></i> Orders</a>
+                        <a class="active" data-page="register"><i class="fas fa-plus-circle"></i> Register Order</a>
+                        <a data-page="addclient"><i class="fas fa-user-plus"></i> Add Client</a>
+                    </div>
+                    <div class="user-info">
+                        <span><i class="fas fa-user"></i> ${currentUser?.displayName || currentUser?.email}</span>
+                        <button id="logoutBtn" class="logout-btn">Logout</button>
+                    </div>
+                </nav>
+                <div class="container">
+                    <div class="card">
+                        <h1>Register New Order</h1>
+                        <form id="orderForm">
+                            <div class="form-group">
+                                <label>Order Number *</label>
+                                <input type="text" id="orderNo" placeholder="e.g., ORD-001" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Select Client</label>
+                                <select id="clientSelect">
+                                    <option value="">-- Walk-in Client --</option>
+                                    ${Object.entries(clients).map(([id, name]) => `<option value="${id}">${name}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Client Name (if not selected)</label>
+                                <input type="text" id="clientNameRaw" placeholder="Enter client name">
+                            </div>
+                            <div class="form-group">
+                                <label>Delivery Date *</label>
+                                <input type="date" id="deliveryDate" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Product Cost (KES) *</label>
+                                    <input type="number" id="productCost" step="0.01" placeholder="Selling price" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Business Expenditure (KES) *</label>
+                                    <input type="number" id="expenditure" step="0.01" placeholder="Cost price" required>
+                                </div>
+                            </div>
+                            <div class="profit-preview">
+                                <label>Calculated Profit/Loss:</label>
+                                <div id="profitPreview" class="profit-amount">KES 0</div>
+                            </div>
+                            <button type="submit" class="submit-btn">Save Order</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+            
+            const productCost = document.getElementById('productCost');
+            const expenditure = document.getElementById('expenditure');
+            const profitPreview = document.getElementById('profitPreview');
+            
+            function updateProfit() {
+                const cost = parseFloat(productCost.value) || 0;
+                const exp = parseFloat(expenditure.value) || 0;
+                const profit = cost - exp;
+                profitPreview.innerHTML = formatKES(profit);
+                profitPreview.style.color = profit >= 0 ? '#10b981' : '#ef4444';
+            }
+            
+            productCost.addEventListener('input', updateProfit);
+            expenditure.addEventListener('input', updateProfit);
+            
+            document.getElementById('orderForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const orderNo = document.getElementById('orderNo').value;
+                const clientId = document.getElementById('clientSelect').value || null;
+                const clientNameRaw = document.getElementById('clientNameRaw').value;
+                const deliveryDate = document.getElementById('deliveryDate').value;
+                const productCostVal = parseFloat(document.getElementById('productCost').value);
+                const expenditureVal = parseFloat(document.getElementById('expenditure').value);
+                
+                if (!orderNo || !deliveryDate) {
+                    alert('Please fill all required fields');
+                    return;
+                }
+                
+                await addDoc(collection(db, ORDERS_COLLECTION), {
+                    orderNo, clientId, clientNameRaw: clientId ? null : (clientNameRaw || 'Guest'),
+                    dateOfDelivery: deliveryDate, productCost: productCostVal,
+                    businessExpenditure: expenditureVal, createdAt: new Date().toISOString()
+                });
+                alert('Order created!');
+                showOrdersPage();
+            });
+            
+            // Navigation
+            document.querySelectorAll('[data-page]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const page = link.dataset.page;
+                    if (page === 'dashboard') showDashboard();
+                    else if (page === 'orders') showOrdersPage();
+                    else if (page === 'register') showRegisterOrderPage();
+                    else if (page === 'addclient') showAddClientPage();
+                });
+            });
+            
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                await signOut(auth);
+            });
+        }
+        
+        async function showAddClientPage() {
+            document.getElementById('app').innerHTML = `
+                <nav class="navbar">
+                    <div class="logo"><h2><i class="fas fa-tshirt"></i> Earthmoney <span>Clothing</span></h2></div>
+                    <div class="nav-links">
+                        <a data-page="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+                        <a data-page="orders"><i class="fas fa-shopping-bag"></i> Orders</a>
+                        <a data-page="register"><i class="fas fa-plus-circle"></i> Register Order</a>
+                        <a class="active" data-page="addclient"><i class="fas fa-user-plus"></i> Add Client</a>
+                    </div>
+                    <div class="user-info">
+                        <span><i class="fas fa-user"></i> ${currentUser?.displayName || currentUser?.email}</span>
+                        <button id="logoutBtn" class="logout-btn">Logout</button>
+                    </div>
+                </nav>
+                <div class="container">
+                    <div class="card">
+                        <h1>Register New Client</h1>
+                        <form id="clientForm">
+                            <div class="form-group">
+                                <label>Client Number *</label>
+                                <input type="text" id="clientNumber" placeholder="e.g., CUST-001" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Full Name *</label>
+                                <input type="text" id="fullName" placeholder="e.g., Jane Wanjiku" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="tel" id="phone" placeholder="+254 712 345 678">
+                            </div>
+                            <button type="submit" class="submit-btn">Save Client</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('clientForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const clientNumber = document.getElementById('clientNumber').value;
+                const fullName = document.getElementById('fullName').value;
+                const phone = document.getElementById('phone').value;
+                
+                if (!clientNumber || !fullName) {
+                    alert('Please fill all required fields');
+                    return;
+                }
+                
+                await addDoc(collection(db, CLIENTS_COLLECTION), {
+                    clientNumber, clientName: fullName, phone: phone || '', createdAt: new Date().toISOString()
+                });
+                alert('Client added!');
+                showRegisterOrderPage();
+            });
+            
+            // Navigation
+            document.querySelectorAll('[data-page]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const page = link.dataset.page;
+                    if (page === 'dashboard') showDashboard();
+                    else if (page === 'orders') showOrdersPage();
+                    else if (page === 'register') showRegisterOrderPage();
+                    else if (page === 'addclient') showAddClientPage();
+                });
+            });
+            
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                await signOut(auth);
+            });
+        }
+    </script>
+</body>
+</html>
