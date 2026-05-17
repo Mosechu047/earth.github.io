@@ -415,7 +415,7 @@
         // Firebase imports
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // Firebase config
         const firebaseConfig = {
@@ -688,7 +688,7 @@
                         <h2><i class="fas fa-chart-line"></i> Recent Orders</h2>
                         <div class="table-container">
                             ${recentOrders.length === 0 ? '<p style="text-align:center; padding: 2rem;">No orders yet. Click "Register Order" to create one.</p>' : `
-                                <table>
+                                <td>
                                     <thead>
                                         <tr><th>Order No</th><th>Client</th><th>Delivery Date</th><th>Revenue</th><th>Expense</th><th>Profit</th></tr>
                                     </thead>
@@ -732,19 +732,29 @@
         }
         
         async function loadClients() {
-            const snapshot = await getDocs(collection(db, CLIENTS_COLLECTION));
-            const clients = {};
-            snapshot.forEach(doc => {
-                clients[doc.id] = doc.data().clientName;
-            });
-            return clients;
+            try {
+                const snapshot = await getDocs(collection(db, CLIENTS_COLLECTION));
+                const clients = {};
+                snapshot.forEach(doc => {
+                    clients[doc.id] = doc.data().clientName;
+                });
+                return clients;
+            } catch (error) {
+                console.error("Error loading clients:", error);
+                return {};
+            }
         }
         
         async function loadOrders() {
-            const snapshot = await getDocs(collection(db, ORDERS_COLLECTION));
-            const orders = [];
-            snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
-            return orders;
+            try {
+                const snapshot = await getDocs(collection(db, ORDERS_COLLECTION));
+                const orders = [];
+                snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
+                return orders;
+            } catch (error) {
+                console.error("Error loading orders:", error);
+                return [];
+            }
         }
         
         async function showOrdersPage() {
