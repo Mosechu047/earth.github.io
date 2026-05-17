@@ -281,6 +281,12 @@
             font-size: 1rem;
         }
 
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -311,6 +317,20 @@
             border-radius: 8px;
             font-size: 1rem;
             cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #2f5e4a;
+        }
+
+        .clear-draft-btn {
+            background: #6c757d;
+            margin-top: 0.5rem;
+        }
+
+        .clear-draft-btn:hover {
+            background: #5a6268;
         }
 
         .delivery-item {
@@ -360,6 +380,124 @@
             cursor: pointer;
         }
 
+        .draft-badge {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-left: 10px;
+            display: inline-block;
+        }
+
+        .restore-banner {
+            background: #e0f2fe;
+            border-left: 4px solid #0284c7;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .restore-banner button {
+            background: #0284c7;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        /* Toast Notification Styles */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            max-width: 400px;
+        }
+
+        .toast-notification.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .toast-notification.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .toast-notification.info {
+            border-left: 4px solid #0284c7;
+        }
+
+        .toast-icon {
+            font-size: 24px;
+        }
+
+        .toast-icon.success {
+            color: #10b981;
+        }
+
+        .toast-icon.error {
+            color: #ef4444;
+        }
+
+        .toast-icon.info {
+            color: #0284c7;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #1e3a2f;
+        }
+
+        .toast-message {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .toast-close {
+            cursor: pointer;
+            color: #999;
+            font-size: 18px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
         @media (max-width: 768px) {
             .navbar {
                 flex-direction: column;
@@ -369,6 +507,11 @@
             }
             .dashboard-grid {
                 grid-template-columns: 1fr;
+            }
+            .toast-notification {
+                left: 20px;
+                right: 20px;
+                max-width: calc(100% - 40px);
             }
         }
     </style>
@@ -389,8 +532,7 @@
             storageBucket: "earthmn-d094d.firebasestorage.app",
             messagingSenderId: "385563967965",
             appId: "1:385563967965:web:abe9258b0500d623ea7634",
-            measurementId: "G-LCMCXJ7FCW",
-            databaseURL: "https://earthmn-d094d-default-rtdb.firebaseio.com"
+            measurementId: "G-LCMCXJ7FCW"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -401,14 +543,97 @@
         const CLIENTS_COLLECTION = "earthmoney_clients";
         let currentUser = null;
 
+        // LocalStorage keys
+        const STORAGE_KEYS = {
+            ORDER_DRAFT: 'earthmoney_order_draft',
+            CLIENT_DRAFT: 'earthmoney_client_draft',
+            ACTIVE_PAGE: 'earthmoney_active_page'
+        };
+
         function formatKES(amount) {
             return `KES ${amount.toLocaleString()}`;
+        }
+
+        function saveOrderDraft(data) {
+            localStorage.setItem(STORAGE_KEYS.ORDER_DRAFT, JSON.stringify(data));
+        }
+
+        function getOrderDraft() {
+            const data = localStorage.getItem(STORAGE_KEYS.ORDER_DRAFT);
+            return data ? JSON.parse(data) : null;
+        }
+
+        function clearOrderDraft() {
+            localStorage.removeItem(STORAGE_KEYS.ORDER_DRAFT);
+        }
+
+        function saveClientDraft(data) {
+            localStorage.setItem(STORAGE_KEYS.CLIENT_DRAFT, JSON.stringify(data));
+        }
+
+        function getClientDraft() {
+            const data = localStorage.getItem(STORAGE_KEYS.CLIENT_DRAFT);
+            return data ? JSON.parse(data) : null;
+        }
+
+        function clearClientDraft() {
+            localStorage.removeItem(STORAGE_KEYS.CLIENT_DRAFT);
+        }
+
+        function saveActivePage(page) {
+            localStorage.setItem(STORAGE_KEYS.ACTIVE_PAGE, page);
+        }
+
+        function getActivePage() {
+            return localStorage.getItem(STORAGE_KEYS.ACTIVE_PAGE) || 'dashboard';
+        }
+
+        function showToast(message, type = 'success', title = '') {
+            const titles = {
+                success: '✓ Success!',
+                error: '⚠️ Error!',
+                info: 'ℹ️ Info'
+            };
+            
+            const toast = document.createElement('div');
+            toast.className = `toast-notification ${type}`;
+            toast.innerHTML = `
+                <div class="toast-icon ${type}">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle')}"></i>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${title || titles[type]}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <div class="toast-close">
+                    <i class="fas fa-times"></i>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            const closeBtn = toast.querySelector('.toast-close');
+            closeBtn.addEventListener('click', () => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            });
+            
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 4000);
         }
 
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
             if (user) {
-                showDashboard();
+                const savedPage = getActivePage();
+                if (savedPage === 'register') showRegisterOrderPage();
+                else if (savedPage === 'addclient') showAddClientPage();
+                else if (savedPage === 'orders') showOrdersPage();
+                else showDashboard();
             } else {
                 showLoginPage();
             }
@@ -461,8 +686,9 @@
                 e.preventDefault();
                 try {
                     await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginPassword').value);
+                    showToast('Welcome back! Redirecting to dashboard...', 'success', 'Login Successful');
                 } catch (error) {
-                    alert('Login failed: ' + error.message);
+                    showToast(error.message, 'error', 'Login Failed');
                 }
             });
 
@@ -470,13 +696,20 @@
                 e.preventDefault();
                 const password = document.getElementById('regPassword').value;
                 const confirm = document.getElementById('regConfirmPassword').value;
-                if (password !== confirm) { alert('Passwords do not match'); return; }
-                if (password.length < 6) { alert('Password must be at least 6 characters'); return; }
+                if (password !== confirm) { 
+                    showToast('Passwords do not match', 'error', 'Registration Failed');
+                    return; 
+                }
+                if (password.length < 6) { 
+                    showToast('Password must be at least 6 characters', 'error', 'Registration Failed');
+                    return; 
+                }
                 try {
                     const userCredential = await createUserWithEmailAndPassword(auth, document.getElementById('regEmail').value, password);
                     await updateProfile(userCredential.user, { displayName: document.getElementById('regName').value });
+                    showToast('Account created successfully! Redirecting...', 'success', 'Registration Successful');
                 } catch (error) {
-                    alert('Registration failed: ' + error.message);
+                    showToast(error.message, 'error', 'Registration Failed');
                 }
             });
         }
@@ -496,6 +729,7 @@
         }
 
         async function showDashboard() {
+            saveActivePage('dashboard');
             const clients = await loadClients();
             const orders = await loadOrders();
             
@@ -550,20 +784,30 @@
                     else if (page === 'addclient') showAddClientPage();
                 });
             });
-            document.getElementById('logoutBtn')?.addEventListener('click', async () => { await signOut(auth); });
+            document.getElementById('logoutBtn')?.addEventListener('click', async () => { 
+                await signOut(auth);
+                showToast('You have been logged out', 'success', 'Logged Out');
+            });
         }
 
         async function showOrdersPage() {
+            saveActivePage('orders');
             const orders = await loadOrders();
             const clients = await loadClients();
             document.getElementById('app').innerHTML = `
                 <nav class="navbar"><div class="logo"><h2><i class="fas fa-tshirt"></i> Earthmoney <span>Clothing</span></h2></div>
                 <div class="nav-links"><a data-page="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a><a class="active" data-page="orders"><i class="fas fa-shopping-bag"></i> Orders</a><a data-page="register"><i class="fas fa-plus-circle"></i> Register Order</a><a data-page="addclient"><i class="fas fa-user-plus"></i> Add Client</a></div>
                 <div class="user-info"><span><i class="fas fa-user"></i> ${currentUser?.displayName || currentUser?.email}</span><button id="logoutBtn" class="logout-btn">Logout</button></div></nav>
-                <div class="container"><div class="card"><h1>All Orders</h1><div class="table-container">${orders.length === 0 ? '<p style="text-align:center;padding:2rem;">No orders yet</p>' : `<table><thead><tr><th>Order No</th><th>Client</th><th>Delivery Date</th><th>Revenue</th><th>Expense</th><th>Profit</th><th>Action</th></tr></thead><tbody>${orders.map(o => `<tr><td>${o.orderNo || o.id.slice(-6)}</td><td>${o.clientId ? (clients[o.clientId] || 'Unknown') : (o.clientNameRaw || 'Walk-in')}</td><td>${o.dateOfDelivery ? new Date(o.dateOfDelivery).toLocaleDateString() : 'N/A'}</td><td>${formatKES(o.productCost||0)}</td><td>${formatKES(o.businessExpenditure||0)}</td><td class="${((o.productCost||0)-(o.businessExpenditure||0))>=0?'profit-positive':'profit-negative'}">${formatKES((o.productCost||0)-(o.businessExpenditure||0))}</td><td><button class="delete-btn" data-id="${o.id}">Delete</button></td></tr>`).join('')}</tbody></table>`}</div></div></div>
+                <div class="container"><div class="card"><h1>All Orders</h1><div class="table-container">${orders.length === 0 ? '<p style="text-align:center;padding:2rem;">No orders yet</p>' : `<table><thead><tr><th>Order No</th><th>Client</th><th>Delivery Date</th><th>Revenue</th><th>Expense</th><th>Profit</th><th>Action</th></tr></thead><tbody>${orders.map(o => `<tr>}<td><strong>${o.orderNo || o.id.slice(-6)}</strong></td><td>${o.clientId ? (clients[o.clientId] || 'Unknown') : (o.clientNameRaw || 'Walk-in')}</td><td>${o.dateOfDelivery ? new Date(o.dateOfDelivery).toLocaleDateString() : 'N/A'}</td><td>${formatKES(o.productCost||0)}</td><td>${formatKES(o.businessExpenditure||0)}</td><td class="${((o.productCost||0)-(o.businessExpenditure||0))>=0?'profit-positive':'profit-negative'}">${formatKES((o.productCost||0)-(o.businessExpenditure||0))}</td><td><button class="delete-btn" data-id="${o.id}">Delete</button></td></tr>`).join('')}</tbody></table>`}</div></div></div>
             `;
             document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', async () => { if(confirm('Delete this order?')) { await deleteDoc(doc(db, ORDERS_COLLECTION, btn.dataset.id)); showOrdersPage(); } });
+                btn.addEventListener('click', async () => { 
+                    if(confirm('Delete this order?')) { 
+                        await deleteDoc(doc(db, ORDERS_COLLECTION, btn.dataset.id)); 
+                        showToast('Order has been removed', 'success', 'Order Deleted');
+                        showOrdersPage(); 
+                    } 
+                });
             });
             document.querySelectorAll('[data-page]').forEach(link => {
                 link.addEventListener('click', (e) => {
@@ -574,43 +818,116 @@
                     else if (page === 'addclient') showAddClientPage();
                 });
             });
-            document.getElementById('logoutBtn')?.addEventListener('click', async () => { await signOut(auth); });
+            document.getElementById('logoutBtn')?.addEventListener('click', async () => { 
+                await signOut(auth);
+                showToast('You have been logged out', 'success', 'Logged Out');
+            });
         }
 
         async function showRegisterOrderPage() {
+            saveActivePage('register');
             const clients = await loadClients();
+            const savedDraft = getOrderDraft();
+            const hasDraft = savedDraft && Object.values(savedDraft).some(v => v);
+            
             document.getElementById('app').innerHTML = `
                 <nav class="navbar"><div class="logo"><h2><i class="fas fa-tshirt"></i> Earthmoney <span>Clothing</span></h2></div>
                 <div class="nav-links"><a data-page="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a><a data-page="orders"><i class="fas fa-shopping-bag"></i> Orders</a><a class="active" data-page="register"><i class="fas fa-plus-circle"></i> Register Order</a><a data-page="addclient"><i class="fas fa-user-plus"></i> Add Client</a></div>
                 <div class="user-info"><span><i class="fas fa-user"></i> ${currentUser?.displayName || currentUser?.email}</span><button id="logoutBtn" class="logout-btn">Logout</button></div></nav>
-                <div class="container"><div class="card"><h1>Register New Order</h1><form id="orderForm">
-                    <div class="form-group"><label>Order Number *</label><input type="text" id="orderNo" placeholder="e.g., ORD-001" required></div>
-                    <div class="form-group"><label>Select Client</label><select id="clientSelect"><option value="">-- Walk-in Client --</option>${Object.entries(clients).map(([id,name]) => `<option value="${id}">${name}</option>`).join('')}</select></div>
-                    <div class="form-group"><label>Client Name (if not selected)</label><input type="text" id="clientNameRaw" placeholder="Enter client name"></div>
-                    <div class="form-group"><label>Delivery Date *</label><input type="date" id="deliveryDate" required></div>
-                    <div class="form-row"><div class="form-group"><label>Product Cost (KES) *</label><input type="number" id="productCost" step="0.01" placeholder="Selling price" required></div>
-                    <div class="form-group"><label>Business Expenditure (KES) *</label><input type="number" id="expenditure" step="0.01" placeholder="Cost price" required></div></div>
-                    <div class="profit-preview"><label>Calculated Profit/Loss:</label><div id="profitPreview" class="profit-amount">KES 0</div></div>
-                    <button type="submit" class="submit-btn">Save Order</button></form></div></div>
+                <div class="container"><div class="card">
+                    <h1>Register New Order ${hasDraft ? '<span class="draft-badge"><i class="fas fa-save"></i> Draft Auto-Saved</span>' : ''}</h1>
+                    ${hasDraft ? '<div class="restore-banner"><span><i class="fas fa-info-circle"></i> You have unsaved data from your last session</span><button id="clearDraftBannerBtn">Clear Draft</button></div>' : ''}
+                    <form id="orderForm">
+                        <div class="form-group"><label>Order Number *</label><input type="text" id="orderNo" placeholder="e.g., ORD-001" value="${savedDraft?.orderNo || ''}" required></div>
+                        <div class="form-group"><label>Select Client</label><select id="clientSelect"><option value="">-- Walk-in Client --</option>${Object.entries(clients).map(([id,name]) => `<option value="${id}" ${savedDraft?.clientId === id ? 'selected' : ''}>${name}</option>`).join('')}</select></div>
+                        <div class="form-group"><label>Client Name (if not selected)</label><input type="text" id="clientNameRaw" placeholder="Enter client name" value="${savedDraft?.clientNameRaw || ''}"></div>
+                        <div class="form-group"><label>Delivery Date *</label><input type="date" id="deliveryDate" value="${savedDraft?.deliveryDate || ''}" required></div>
+                        <div class="form-row"><div class="form-group"><label>Product Cost (KES) *</label><input type="number" id="productCost" step="0.01" placeholder="Selling price" value="${savedDraft?.productCost || ''}" required></div>
+                        <div class="form-group"><label>Business Expenditure (KES) *</label><input type="number" id="expenditure" step="0.01" placeholder="Cost price" value="${savedDraft?.expenditure || ''}" required></div></div>
+                        <div class="profit-preview"><label>Calculated Profit/Loss:</label><div id="profitPreview" class="profit-amount">KES 0</div></div>
+                        <button type="submit" class="submit-btn"><i class="fas fa-save"></i> Save Order</button>
+                    </form></div></div>
             `;
-            const cost = document.getElementById('productCost'), exp = document.getElementById('expenditure'), preview = document.getElementById('profitPreview');
-            const updateProfit = () => { const profit = (parseFloat(cost?.value)||0) - (parseFloat(exp?.value)||0); preview.innerHTML = formatKES(profit); preview.style.color = profit >=0 ? '#10b981' : '#ef4444'; };
-            cost?.addEventListener('input', updateProfit);
-            exp?.addEventListener('input', updateProfit);
+            
+            // Calculate and display profit
+            const costInput = document.getElementById('productCost');
+            const expInput = document.getElementById('expenditure');
+            const profitPreview = document.getElementById('profitPreview');
+            
+            function updateProfit() {
+                const cost = parseFloat(costInput?.value) || 0;
+                const exp = parseFloat(expInput?.value) || 0;
+                const profit = cost - exp;
+                if (profitPreview) {
+                    profitPreview.innerHTML = formatKES(profit);
+                    profitPreview.style.color = profit >= 0 ? '#10b981' : '#ef4444';
+                }
+                // Auto-save to localStorage
+                const formData = {
+                    orderNo: document.getElementById('orderNo')?.value || '',
+                    clientId: document.getElementById('clientSelect')?.value || '',
+                    clientNameRaw: document.getElementById('clientNameRaw')?.value || '',
+                    deliveryDate: document.getElementById('deliveryDate')?.value || '',
+                    productCost: document.getElementById('productCost')?.value || '',
+                    expenditure: document.getElementById('expenditure')?.value || ''
+                };
+                saveOrderDraft(formData);
+            }
+            
+            // Add event listeners to all form fields
+            const formFields = ['orderNo', 'clientSelect', 'clientNameRaw', 'deliveryDate', 'productCost', 'expenditure'];
+            formFields.forEach(fieldId => {
+                const element = document.getElementById(fieldId);
+                if (element) {
+                    element.addEventListener('input', updateProfit);
+                    element.addEventListener('change', updateProfit);
+                }
+            });
+            
+            // Initial profit calculation
+            updateProfit();
+            
+            // Handle clear draft banner
+            const clearBannerBtn = document.getElementById('clearDraftBannerBtn');
+            if (clearBannerBtn) {
+                clearBannerBtn.addEventListener('click', () => {
+                    clearOrderDraft();
+                    showToast('Draft cleared successfully', 'info', 'Draft Removed');
+                    showRegisterOrderPage();
+                });
+            }
+            
+            // Form submission
             document.getElementById('orderForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
+                const orderNo = document.getElementById('orderNo').value;
+                const productCostVal = parseFloat(document.getElementById('productCost').value);
+                const expenditureVal = parseFloat(document.getElementById('expenditure').value);
+                const profitVal = productCostVal - expenditureVal;
+                
+                if (!orderNo || !productCostVal || !expenditureVal) {
+                    showToast('Please fill all required fields', 'error', 'Missing Information');
+                    return;
+                }
+                
                 await addDoc(collection(db, ORDERS_COLLECTION), {
-                    orderNo: document.getElementById('orderNo').value,
+                    orderNo: orderNo,
                     clientId: document.getElementById('clientSelect').value || null,
                     clientNameRaw: document.getElementById('clientNameRaw').value || 'Guest',
                     dateOfDelivery: document.getElementById('deliveryDate').value,
-                    productCost: parseFloat(document.getElementById('productCost').value),
-                    businessExpenditure: parseFloat(document.getElementById('expenditure').value),
+                    productCost: productCostVal,
+                    businessExpenditure: expenditureVal,
                     createdAt: new Date().toISOString()
                 });
-                alert('Order created!');
-                showOrdersPage();
+                
+                clearOrderDraft();
+                showToast(`Order #${orderNo} placed! Profit: ${formatKES(profitVal)}`, 'success', 'Order Placed Successfully!');
+                
+                setTimeout(() => {
+                    showOrdersPage();
+                }, 2000);
             });
+            
             document.querySelectorAll('[data-page]').forEach(link => {
                 link.addEventListener('click', (e) => {
                     const page = link.dataset.page;
@@ -620,31 +937,91 @@
                     else if (page === 'addclient') showAddClientPage();
                 });
             });
-            document.getElementById('logoutBtn')?.addEventListener('click', async () => { await signOut(auth); });
+            document.getElementById('logoutBtn')?.addEventListener('click', async () => { 
+                await signOut(auth);
+                showToast('You have been logged out', 'success', 'Logged Out');
+            });
         }
 
         async function showAddClientPage() {
+            saveActivePage('addclient');
+            const savedDraft = getClientDraft();
+            const hasDraft = savedDraft && Object.values(savedDraft).some(v => v);
+            
             document.getElementById('app').innerHTML = `
                 <nav class="navbar"><div class="logo"><h2><i class="fas fa-tshirt"></i> Earthmoney <span>Clothing</span></h2></div>
                 <div class="nav-links"><a data-page="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a><a data-page="orders"><i class="fas fa-shopping-bag"></i> Orders</a><a data-page="register"><i class="fas fa-plus-circle"></i> Register Order</a><a class="active" data-page="addclient"><i class="fas fa-user-plus"></i> Add Client</a></div>
                 <div class="user-info"><span><i class="fas fa-user"></i> ${currentUser?.displayName || currentUser?.email}</span><button id="logoutBtn" class="logout-btn">Logout</button></div></nav>
-                <div class="container"><div class="card"><h1>Register New Client</h1><form id="clientForm">
-                    <div class="form-group"><label>Client Number *</label><input type="text" id="clientNumber" placeholder="e.g., CUST-001" required></div>
-                    <div class="form-group"><label>Full Name *</label><input type="text" id="fullName" placeholder="e.g., Jane Wanjiku" required></div>
-                    <div class="form-group"><label>Phone Number</label><input type="tel" id="phone" placeholder="+254 712 345 678"></div>
-                    <button type="submit" class="submit-btn">Save Client</button></form></div></div>
+                <div class="container"><div class="card">
+                    <h1>Register New Client ${hasDraft ? '<span class="draft-badge"><i class="fas fa-save"></i> Draft Auto-Saved</span>' : ''}</h1>
+                    ${hasDraft ? '<div class="restore-banner"><span><i class="fas fa-info-circle"></i> You have unsaved data from your last session</span><button id="clearDraftBannerBtn">Clear Draft</button></div>' : ''}
+                    <form id="clientForm">
+                        <div class="form-group"><label>Client Number *</label><input type="text" id="clientNumber" placeholder="e.g., CUST-001" value="${savedDraft?.clientNumber || ''}" required></div>
+                        <div class="form-group"><label>Full Name *</label><input type="text" id="fullName" placeholder="e.g., Jane Wanjiku" value="${savedDraft?.fullName || ''}" required></div>
+                        <div class="form-group"><label>Phone Number</label><input type="tel" id="phone" placeholder="+254 712 345 678" value="${savedDraft?.phone || ''}"></div>
+                        <div class="form-group"><label>Email (Optional)</label><input type="email" id="email" placeholder="client@example.com" value="${savedDraft?.email || ''}"></div>
+                        <button type="submit" class="submit-btn"><i class="fas fa-save"></i> Save Client</button>
+                    </form></div></div>
             `;
+            
+            // Auto-save function
+            function autoSaveClient() {
+                const formData = {
+                    clientNumber: document.getElementById('clientNumber')?.value || '',
+                    fullName: document.getElementById('fullName')?.value || '',
+                    phone: document.getElementById('phone')?.value || '',
+                    email: document.getElementById('email')?.value || ''
+                };
+                saveClientDraft(formData);
+            }
+            
+            // Add event listeners
+            const clientFields = ['clientNumber', 'fullName', 'phone', 'email'];
+            clientFields.forEach(fieldId => {
+                const element = document.getElementById(fieldId);
+                if (element) {
+                    element.addEventListener('input', autoSaveClient);
+                    element.addEventListener('change', autoSaveClient);
+                }
+            });
+            
+            // Handle clear draft banner
+            const clearBannerBtn = document.getElementById('clearDraftBannerBtn');
+            if (clearBannerBtn) {
+                clearBannerBtn.addEventListener('click', () => {
+                    clearClientDraft();
+                    showToast('Draft cleared successfully', 'info', 'Draft Removed');
+                    showAddClientPage();
+                });
+            }
+            
+            // Form submission
             document.getElementById('clientForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
+                const clientNumber = document.getElementById('clientNumber').value;
+                const fullName = document.getElementById('fullName').value;
+                
+                if (!clientNumber || !fullName) {
+                    showToast('Please fill all required fields', 'error', 'Missing Information');
+                    return;
+                }
+                
                 await addDoc(collection(db, CLIENTS_COLLECTION), {
-                    clientNumber: document.getElementById('clientNumber').value,
-                    clientName: document.getElementById('fullName').value,
+                    clientNumber: clientNumber,
+                    clientName: fullName,
                     phone: document.getElementById('phone').value || '',
+                    email: document.getElementById('email').value || '',
                     createdAt: new Date().toISOString()
                 });
-                alert('Client added!');
-                showRegisterOrderPage();
+                
+                clearClientDraft();
+                showToast(`Client ${fullName} registered successfully!`, 'success', 'Client Registered!');
+                
+                setTimeout(() => {
+                    showRegisterOrderPage();
+                }, 2000);
             });
+            
             document.querySelectorAll('[data-page]').forEach(link => {
                 link.addEventListener('click', (e) => {
                     const page = link.dataset.page;
@@ -654,7 +1031,10 @@
                     else if (page === 'addclient') showAddClientPage();
                 });
             });
-            document.getElementById('logoutBtn')?.addEventListener('click', async () => { await signOut(auth); });
+            document.getElementById('logoutBtn')?.addEventListener('click', async () => { 
+                await signOut(auth);
+                showToast('You have been logged out', 'success', 'Logged Out');
+            });
         }
     </script>
 </body>
