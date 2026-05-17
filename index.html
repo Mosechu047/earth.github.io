@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Earthmoney Clothing Management System</title>
+    <title>Earthmoney Clothing - Realtime DB</title>
     <style>
         * {
             margin: 0;
@@ -71,16 +71,13 @@
             font-family: inherit;
         }
 
-        .logout-btn:hover {
-            background: #b91c1c;
-        }
-
         .container {
             max-width: 1400px;
             margin: 2rem auto;
             padding: 0 2rem;
         }
 
+        /* Login Page Styles */
         .login-container {
             min-height: 100vh;
             display: flex;
@@ -181,11 +178,6 @@
             font-size: 14px;
         }
 
-        .input-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
         .login-btn {
             width: 100%;
             padding: 12px;
@@ -198,6 +190,7 @@
             cursor: pointer;
         }
 
+        /* Dashboard Styles */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -281,12 +274,6 @@
             font-size: 1rem;
         }
 
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
-        }
-
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -317,20 +304,6 @@
             border-radius: 8px;
             font-size: 1rem;
             cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .submit-btn:hover {
-            background: #2f5e4a;
-        }
-
-        .clear-draft-btn {
-            background: #6c757d;
-            margin-top: 0.5rem;
-        }
-
-        .clear-draft-btn:hover {
-            background: #5a6268;
         }
 
         .delivery-item {
@@ -380,37 +353,6 @@
             cursor: pointer;
         }
 
-        .draft-badge {
-            background: #fef3c7;
-            color: #92400e;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            margin-left: 10px;
-            display: inline-block;
-        }
-
-        .restore-banner {
-            background: #e0f2fe;
-            border-left: 4px solid #0284c7;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .restore-banner button {
-            background: #0284c7;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        /* Toast Notification Styles */
         .toast-notification {
             position: fixed;
             top: 20px;
@@ -427,92 +369,25 @@
             max-width: 400px;
         }
 
-        .toast-notification.success {
-            border-left: 4px solid #10b981;
-        }
-
-        .toast-notification.error {
-            border-left: 4px solid #ef4444;
-        }
-
-        .toast-notification.info {
-            border-left: 4px solid #0284c7;
-        }
-
-        .toast-icon {
-            font-size: 24px;
-        }
-
-        .toast-icon.success {
-            color: #10b981;
-        }
-
-        .toast-icon.error {
-            color: #ef4444;
-        }
-
-        .toast-icon.info {
-            color: #0284c7;
-        }
-
-        .toast-content {
-            flex: 1;
-        }
-
-        .toast-title {
-            font-weight: 700;
-            margin-bottom: 4px;
-            color: #1e3a2f;
-        }
-
-        .toast-message {
-            font-size: 14px;
-            color: #666;
-        }
-
-        .toast-close {
-            cursor: pointer;
-            color: #999;
-            font-size: 18px;
-        }
+        .toast-notification.success { border-left: 4px solid #10b981; }
+        .toast-notification.error { border-left: 4px solid #ef4444; }
+        .toast-icon.success { color: #10b981; }
+        .toast-icon.error { color: #ef4444; }
+        .toast-icon { font-size: 24px; }
+        .toast-content { flex: 1; }
+        .toast-title { font-weight: 700; margin-bottom: 4px; color: #1e3a2f; }
+        .toast-message { font-size: 14px; color: #666; }
+        .toast-close { cursor: pointer; color: #999; font-size: 18px; }
 
         @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideOut {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(100%);
-                opacity: 0;
-            }
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-            }
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-            .toast-notification {
-                left: 20px;
-                right: 20px;
-                max-width: calc(100% - 40px);
-            }
+            .navbar { flex-direction: column; }
+            .form-row { grid-template-columns: 1fr; }
+            .dashboard-grid { grid-template-columns: 1fr; }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -523,11 +398,12 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getDatabase, ref, set, get, push, remove, onValue, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA6PKRSstZhiWFVDThYRktFQdf5BnPgX7w",
             authDomain: "earthmn-d094d.firebaseapp.com",
+            databaseURL: "https://earthmn-d094d-default-rtdb.europe-west1.firebasedatabase.app/",
             projectId: "earthmn-d094d",
             storageBucket: "earthmn-d094d.firebasestorage.app",
             messagingSenderId: "385563967965",
@@ -537,503 +413,246 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app);
+        const db = getDatabase(app);
 
-        const ORDERS_COLLECTION = "earthmoney_orders";
-        const CLIENTS_COLLECTION = "earthmoney_clients";
         let currentUser = null;
-
-        // LocalStorage keys
-        const STORAGE_KEYS = {
-            ORDER_DRAFT: 'earthmoney_order_draft',
-            CLIENT_DRAFT: 'earthmoney_client_draft',
-            ACTIVE_PAGE: 'earthmoney_active_page'
-        };
 
         function formatKES(amount) {
             return `KES ${amount.toLocaleString()}`;
         }
 
-        function saveOrderDraft(data) {
-            localStorage.setItem(STORAGE_KEYS.ORDER_DRAFT, JSON.stringify(data));
-        }
-
-        function getOrderDraft() {
-            const data = localStorage.getItem(STORAGE_KEYS.ORDER_DRAFT);
-            return data ? JSON.parse(data) : null;
-        }
-
-        function clearOrderDraft() {
-            localStorage.removeItem(STORAGE_KEYS.ORDER_DRAFT);
-        }
-
-        function saveClientDraft(data) {
-            localStorage.setItem(STORAGE_KEYS.CLIENT_DRAFT, JSON.stringify(data));
-        }
-
-        function getClientDraft() {
-            const data = localStorage.getItem(STORAGE_KEYS.CLIENT_DRAFT);
-            return data ? JSON.parse(data) : null;
-        }
-
-        function clearClientDraft() {
-            localStorage.removeItem(STORAGE_KEYS.CLIENT_DRAFT);
-        }
-
-        function saveActivePage(page) {
-            localStorage.setItem(STORAGE_KEYS.ACTIVE_PAGE, page);
-        }
-
-        function getActivePage() {
-            return localStorage.getItem(STORAGE_KEYS.ACTIVE_PAGE) || 'dashboard';
-        }
-
         function showToast(message, type = 'success', title = '') {
-            const titles = {
-                success: '✓ Success!',
-                error: '⚠️ Error!',
-                info: 'ℹ️ Info'
-            };
-            
+            const titles = { success: '✓ Success!', error: '⚠️ Error!', info: 'ℹ️ Info' };
             const toast = document.createElement('div');
             toast.className = `toast-notification ${type}`;
             toast.innerHTML = `
-                <div class="toast-icon ${type}">
-                    <i class="fas ${type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle')}"></i>
-                </div>
-                <div class="toast-content">
-                    <div class="toast-title">${title || titles[type]}</div>
-                    <div class="toast-message">${message}</div>
-                </div>
-                <div class="toast-close">
-                    <i class="fas fa-times"></i>
-                </div>
+                <div class="toast-icon ${type}"><i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i></div>
+                <div class="toast-content"><div class="toast-title">${title || titles[type]}</div><div class="toast-message">${message}</div></div>
+                <div class="toast-close"><i class="fas fa-times"></i></div>
             `;
-            
             document.body.appendChild(toast);
-            
-            const closeBtn = toast.querySelector('.toast-close');
-            closeBtn.addEventListener('click', () => {
-                toast.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => toast.remove(), 300);
-            });
-            
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.style.animation = 'slideOut 0.3s ease';
-                    setTimeout(() => toast.remove(), 300);
-                }
-            }, 4000);
+            toast.querySelector('.toast-close').onclick = () => toast.remove();
+            setTimeout(() => toast.remove(), 4000);
         }
 
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
-            if (user) {
-                const savedPage = getActivePage();
-                if (savedPage === 'register') showRegisterOrderPage();
-                else if (savedPage === 'addclient') showAddClientPage();
-                else if (savedPage === 'orders') showOrdersPage();
-                else showDashboard();
-            } else {
-                showLoginPage();
-            }
+            if (user) showDashboard();
+            else showLoginPage();
         });
 
         function showLoginPage() {
             document.getElementById('app').innerHTML = `
-                <div class="login-container">
-                    <div class="login-card">
-                        <div class="login-header">
-                            <div class="logo-icon"><i class="fas fa-tshirt"></i></div>
-                            <h1>Earthmoney <span>Clothing</span></h1>
-                            <p>Management System</p>
-                        </div>
-                        <div class="login-tabs">
-                            <button class="tab-btn active" data-tab="login">Login</button>
-                            <button class="tab-btn" data-tab="register">Sign Up</button>
-                        </div>
-                        <div id="loginForm" class="tab-content active">
-                            <form id="loginUserForm">
-                                <div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="loginEmail" placeholder="Email Address" required></div>
-                                <div class="input-group"><i class="fas fa-lock"></i><input type="password" id="loginPassword" placeholder="Password" required></div>
-                                <button type="submit" class="login-btn">Login</button>
-                            </form>
-                        </div>
-                        <div id="registerForm" class="tab-content">
-                            <form id="registerUserForm">
-                                <div class="input-group"><i class="fas fa-user"></i><input type="text" id="regName" placeholder="Full Name" required></div>
-                                <div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="regEmail" placeholder="Email Address" required></div>
-                                <div class="input-group"><i class="fas fa-lock"></i><input type="password" id="regPassword" placeholder="Password (min 6 characters)" required></div>
-                                <div class="input-group"><i class="fas fa-lock"></i><input type="password" id="regConfirmPassword" placeholder="Confirm Password" required></div>
-                                <button type="submit" class="login-btn">Create Account</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+                <div class="login-container"><div class="login-card">
+                    <div class="login-header"><div class="logo-icon"><i class="fas fa-tshirt"></i></div><h1>Earthmoney <span>Clothing</span></h1><p>Management System</p></div>
+                    <div class="login-tabs"><button class="tab-btn active" data-tab="login">Login</button><button class="tab-btn" data-tab="register">Sign Up</button></div>
+                    <div id="loginForm" class="tab-content active"><form id="loginUserForm"><div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="loginEmail" placeholder="Email Address" required></div><div class="input-group"><i class="fas fa-lock"></i><input type="password" id="loginPassword" placeholder="Password" required></div><button type="submit" class="login-btn">Login</button></form></div>
+                    <div id="registerForm" class="tab-content"><form id="registerUserForm"><div class="input-group"><i class="fas fa-user"></i><input type="text" id="regName" placeholder="Full Name" required></div><div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="regEmail" placeholder="Email Address" required></div><div class="input-group"><i class="fas fa-lock"></i><input type="password" id="regPassword" placeholder="Password (min 6 characters)" required></div><div class="input-group"><i class="fas fa-lock"></i><input type="password" id="regConfirmPassword" placeholder="Confirm Password" required></div><button type="submit" class="login-btn">Create Account</button></form></div>
+                </div></div>
             `;
-
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
+                btn.onclick = () => {
                     const tab = btn.dataset.tab;
                     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                     btn.classList.add('active');
                     document.getElementById(`${tab}Form`).classList.add('active');
-                });
+                };
             });
-
-            document.getElementById('loginUserForm').addEventListener('submit', async (e) => {
+            document.getElementById('loginUserForm').onsubmit = async (e) => {
                 e.preventDefault();
                 try {
                     await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginPassword').value);
-                    showToast('Welcome back! Redirecting to dashboard...', 'success', 'Login Successful');
-                } catch (error) {
-                    showToast(error.message, 'error', 'Login Failed');
-                }
-            });
-
-            document.getElementById('registerUserForm').addEventListener('submit', async (e) => {
+                    showToast('Welcome back!', 'success', 'Login Successful');
+                } catch (error) { showToast(error.message, 'error', 'Login Failed'); }
+            };
+            document.getElementById('registerUserForm').onsubmit = async (e) => {
                 e.preventDefault();
-                const password = document.getElementById('regPassword').value;
-                const confirm = document.getElementById('regConfirmPassword').value;
-                if (password !== confirm) { 
-                    showToast('Passwords do not match', 'error', 'Registration Failed');
-                    return; 
-                }
-                if (password.length < 6) { 
-                    showToast('Password must be at least 6 characters', 'error', 'Registration Failed');
-                    return; 
-                }
+                const pass = document.getElementById('regPassword').value, confirm = document.getElementById('regConfirmPassword').value;
+                if (pass !== confirm) return showToast('Passwords do not match', 'error');
+                if (pass.length < 6) return showToast('Password must be at least 6 characters', 'error');
                 try {
-                    const userCredential = await createUserWithEmailAndPassword(auth, document.getElementById('regEmail').value, password);
-                    await updateProfile(userCredential.user, { displayName: document.getElementById('regName').value });
-                    showToast('Account created successfully! Redirecting...', 'success', 'Registration Successful');
-                } catch (error) {
-                    showToast(error.message, 'error', 'Registration Failed');
-                }
-            });
+                    const cred = await createUserWithEmailAndPassword(auth, document.getElementById('regEmail').value, pass);
+                    await updateProfile(cred.user, { displayName: document.getElementById('regName').value });
+                    showToast('Account created!', 'success', 'Registration Successful');
+                } catch (error) { showToast(error.message, 'error', 'Registration Failed'); }
+            };
         }
 
-        async function loadClients() {
-            const snapshot = await getDocs(collection(db, CLIENTS_COLLECTION));
-            const clients = {};
-            snapshot.forEach(doc => { clients[doc.id] = doc.data().clientName; });
-            return clients;
+        // Database operations
+        async function getClients() {
+            const snapshot = await get(ref(db, 'clients'));
+            return snapshot.exists() ? snapshot.val() : {};
         }
 
-        async function loadOrders() {
-            const snapshot = await getDocs(collection(db, ORDERS_COLLECTION));
-            const orders = [];
-            snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
-            return orders;
+        async function getOrders() {
+            const snapshot = await get(ref(db, 'orders'));
+            const orders = snapshot.exists() ? snapshot.val() : {};
+            return Object.entries(orders).map(([id, data]) => ({ id, ...data }));
+        }
+
+        async function addClient(clientData) {
+            const newRef = push(ref(db, 'clients'));
+            await set(newRef, { ...clientData, createdAt: new Date().toISOString() });
+            return newRef.key;
+        }
+
+        async function addOrder(orderData) {
+            const newRef = push(ref(db, 'orders'));
+            await set(newRef, { ...orderData, createdAt: new Date().toISOString() });
+            return newRef.key;
+        }
+
+        async function deleteOrder(orderId) {
+            await remove(ref(db, `orders/${orderId}`));
         }
 
         async function showDashboard() {
-            saveActivePage('dashboard');
-            const clients = await loadClients();
-            const orders = await loadOrders();
+            const clients = await getClients();
+            const orders = await getOrders();
             
             let totalRevenue = 0, totalExpenditure = 0, totalProfit = 0;
-            orders.forEach(order => {
-                totalRevenue += order.productCost || 0;
-                totalExpenditure += order.businessExpenditure || 0;
-                totalProfit += (order.productCost || 0) - (order.businessExpenditure || 0);
+            orders.forEach(o => {
+                totalRevenue += o.productCost || 0;
+                totalExpenditure += o.businessExpenditure || 0;
+                totalProfit += (o.productCost || 0) - (o.businessExpenditure || 0);
             });
-            
             const profitMargin = totalRevenue > 0 ? ((totalProfit / totalRevenue) * 100).toFixed(1) : 0;
             const today = new Date(); today.setHours(0,0,0,0);
             const upcoming = orders.filter(o => o.dateOfDelivery && new Date(o.dateOfDelivery) >= today).slice(0,5);
             const recentOrders = [...orders].reverse().slice(0,10);
             
             document.getElementById('app').innerHTML = `
-                <nav class="navbar">
-                    <div class="logo"><h2><i class="fas fa-tshirt"></i> Earthmoney <span>Clothing</span></h2></div>
-                    <div class="nav-links">
-                        <a class="active" data-page="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
-                        <a data-page="orders"><i class="fas fa-shopping-bag"></i> Orders</a>
-                        <a data-page="register"><i class="fas fa-plus-circle"></i> Register Order</a>
-                        <a data-page="addclient"><i class="fas fa-user-plus"></i> Add Client</a>
-                    </div>
-                    <div class="user-info">
-                        <span><i class="fas fa-user"></i> ${currentUser?.displayName || currentUser?.email}</span>
-                        <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
-                    </div>
-                </nav>
+                <nav class="navbar"><div class="logo"><h2><i class="fas fa-tshirt"></i> Earthmoney <span>Clothing</span></h2></div>
+                <div class="nav-links"><a class="active" data-page="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a><a data-page="orders"><i class="fas fa-shopping-bag"></i> Orders</a><a data-page="register"><i class="fas fa-plus-circle"></i> Register Order</a><a data-page="addclient"><i class="fas fa-user-plus"></i> Add Client</a></div>
+                <div class="user-info"><span><i class="fas fa-user"></i> ${currentUser?.displayName || currentUser?.email}</span><button id="logoutBtn" class="logout-btn">Logout</button></div></nav>
                 <div class="container">
-                    <div class="welcome-section"><h1>Financial Dashboard</h1><p>Track your business performance in Kenyan Shillings (KES)</p></div>
                     <div class="stats-grid">
                         <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h3>Total Revenue</h3><p class="stat-value">${formatKES(totalRevenue)}</p></div></div>
                         <div class="stat-card"><div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div><div class="stat-info"><h3>Total Expenditure</h3><p class="stat-value">${formatKES(totalExpenditure)}</p></div></div>
-                        <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-simple"></i></div><div class="stat-info"><h3>Net Profit</h3><p class="stat-value" style="color: ${totalProfit >=0 ? '#10b981' : '#ef4444'}">${formatKES(totalProfit)}</p></div></div>
+                        <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-simple"></i></div><div class="stat-info"><h3>Net Profit</h3><p class="stat-value" style="color: ${totalProfit>=0?'#10b981':'#ef4444'}">${formatKES(totalProfit)}</p></div></div>
                         <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-pie"></i></div><div class="stat-info"><h3>Profit Margin</h3><p class="stat-value">${profitMargin}%</p></div></div>
                     </div>
                     <div class="dashboard-grid">
-                        <div class="card"><h2><i class="fas fa-calendar-alt"></i> Upcoming Deliveries</h2>${upcoming.map(o => `<div class="delivery-item"><div><strong>${o.orderNo || o.id.slice(-6)}</strong><br><small>${o.clientId ? (clients[o.clientId] || 'Unknown') : (o.clientNameRaw || 'Walk-in')}</small></div><div>${new Date(o.dateOfDelivery).toLocaleDateString()}</div><div class="${((o.productCost||0)-(o.businessExpenditure||0))>=0?'profit-positive':'profit-negative'}">${formatKES((o.productCost||0)-(o.businessExpenditure||0))}</div></div>`).join('') || '<p style="text-align:center; padding:2rem;">No upcoming deliveries</p>'}</div>
+                        <div class="card"><h2><i class="fas fa-calendar-alt"></i> Upcoming Deliveries</h2>${upcoming.map(o => `<div class="delivery-item"><div><strong>${o.orderNo || o.id.slice(-6)}</strong><br><small>${clients[o.clientId]?.name || o.clientNameRaw || 'Walk-in'}</small></div><div>${new Date(o.dateOfDelivery).toLocaleDateString()}</div><div class="${((o.productCost||0)-(o.businessExpenditure||0))>=0?'profit-positive':'profit-negative'}">${formatKES((o.productCost||0)-(o.businessExpenditure||0))}</div></div>`).join('') || '<p style="text-align:center;padding:2rem;">No upcoming deliveries</p>'}</div>
                         <div class="card"><h2><i class="fas fa-chart-bar"></i> Performance Summary</h2><div><div style="display:flex;justify-content:space-between;padding:0.75rem 0"><span><strong>Total Orders:</strong></span><span>${orders.length}</span></div><div style="display:flex;justify-content:space-between;padding:0.75rem 0"><span><strong>Profitable Orders:</strong></span><span style="color:#10b981;">${orders.filter(o => (o.productCost||0) > (o.businessExpenditure||0)).length}</span></div><div style="display:flex;justify-content:space-between;padding:0.75rem 0"><span><strong>Loss Orders:</strong></span><span style="color:#ef4444;">${orders.filter(o => (o.productCost||0) < (o.businessExpenditure||0)).length}</span></div></div></div>
                     </div>
-                    <div class="card"><h2><i class="fas fa-chart-line"></i> Recent Orders</h2><div class="table-container">${recentOrders.length === 0 ? '<p style="text-align:center;padding:2rem;">No orders yet</p>' : `<table><thead><tr><th>Order No</th><th>Client</th><th>Delivery Date</th><th>Revenue</th><th>Expense</th><th>Profit</th></tr></thead><tbody>${recentOrders.map(o => `<tr><td><strong>${o.orderNo || o.id.slice(-6)}</strong></td><td>${o.clientId ? (clients[o.clientId] || 'Unknown') : (o.clientNameRaw || 'Walk-in')}</td><td>${o.dateOfDelivery ? new Date(o.dateOfDelivery).toLocaleDateString() : 'N/A'}</td><td>${formatKES(o.productCost||0)}</td><td>${formatKES(o.businessExpenditure||0)}</td><td class="${((o.productCost||0)-(o.businessExpenditure||0))>=0?'profit-positive':'profit-negative'}">${formatKES((o.productCost||0)-(o.businessExpenditure||0))}</td></tr>`).join('')}</tbody></table>`}</div></div>
+                    <div class="card"><h2><i class="fas fa-chart-line"></i> Recent Orders</h2><div class="table-container">${recentOrders.length === 0 ? '<p style="text-align:center;padding:2rem;">No orders yet</p>' : `<table><thead><tr><th>Order No</th><th>Client</th><th>Delivery Date</th><th>Revenue</th><th>Expense</th><th>Profit</th></tr></thead><tbody>${recentOrders.map(o => `<tr><td><strong>${o.orderNo || o.id.slice(-6)}</strong></td><td>${clients[o.clientId]?.name || o.clientNameRaw || 'Walk-in'}</td><td>${o.dateOfDelivery ? new Date(o.dateOfDelivery).toLocaleDateString() : 'N/A'}</td><td>${formatKES(o.productCost||0)}</td><td>${formatKES(o.businessExpenditure||0)}</td><td class="${((o.productCost||0)-(o.businessExpenditure||0))>=0?'profit-positive':'profit-negative'}">${formatKES((o.productCost||0)-(o.businessExpenditure||0))}</td></tr>`).join('')}</tbody></table>`}</div></div>
                 </div>
             `;
-            
-            document.querySelectorAll('[data-page]').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    const page = link.dataset.page;
-                    if (page === 'dashboard') showDashboard();
-                    else if (page === 'orders') showOrdersPage();
-                    else if (page === 'register') showRegisterOrderPage();
-                    else if (page === 'addclient') showAddClientPage();
-                });
-            });
-            document.getElementById('logoutBtn')?.addEventListener('click', async () => { 
-                await signOut(auth);
-                showToast('You have been logged out', 'success', 'Logged Out');
-            });
+            attachNavHandlers();
+            document.getElementById('logoutBtn').onclick = () => signOut(auth);
         }
 
         async function showOrdersPage() {
-            saveActivePage('orders');
-            const orders = await loadOrders();
-            const clients = await loadClients();
+            const orders = await getOrders();
+            const clients = await getClients();
             document.getElementById('app').innerHTML = `
                 <nav class="navbar"><div class="logo"><h2><i class="fas fa-tshirt"></i> Earthmoney <span>Clothing</span></h2></div>
                 <div class="nav-links"><a data-page="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a><a class="active" data-page="orders"><i class="fas fa-shopping-bag"></i> Orders</a><a data-page="register"><i class="fas fa-plus-circle"></i> Register Order</a><a data-page="addclient"><i class="fas fa-user-plus"></i> Add Client</a></div>
                 <div class="user-info"><span><i class="fas fa-user"></i> ${currentUser?.displayName || currentUser?.email}</span><button id="logoutBtn" class="logout-btn">Logout</button></div></nav>
-                <div class="container"><div class="card"><h1>All Orders</h1><div class="table-container">${orders.length === 0 ? '<p style="text-align:center;padding:2rem;">No orders yet</p>' : `<table><thead><tr><th>Order No</th><th>Client</th><th>Delivery Date</th><th>Revenue</th><th>Expense</th><th>Profit</th><th>Action</th></tr></thead><tbody>${orders.map(o => `<tr>}<td><strong>${o.orderNo || o.id.slice(-6)}</strong></td><td>${o.clientId ? (clients[o.clientId] || 'Unknown') : (o.clientNameRaw || 'Walk-in')}</td><td>${o.dateOfDelivery ? new Date(o.dateOfDelivery).toLocaleDateString() : 'N/A'}</td><td>${formatKES(o.productCost||0)}</td><td>${formatKES(o.businessExpenditure||0)}</td><td class="${((o.productCost||0)-(o.businessExpenditure||0))>=0?'profit-positive':'profit-negative'}">${formatKES((o.productCost||0)-(o.businessExpenditure||0))}</td><td><button class="delete-btn" data-id="${o.id}">Delete</button></td></tr>`).join('')}</tbody></table>`}</div></div></div>
+                <div class="container"><div class="card"><h1>All Orders</h1><div class="table-container">${orders.length === 0 ? '<p style="text-align:center;padding:2rem;">No orders yet</p>' : `<tr><thead><tr><th>Order No</th><th>Client</th><th>Delivery Date</th><th>Revenue</th><th>Expense</th><th>Profit</th><th>Action</th></tr></thead><tbody>${orders.map(o => `<tr><td><strong>${o.orderNo || o.id.slice(-6)}</strong></td><td>${clients[o.clientId]?.name || o.clientNameRaw || 'Walk-in'}</td><td>${o.dateOfDelivery ? new Date(o.dateOfDelivery).toLocaleDateString() : 'N/A'}</td><td>${formatKES(o.productCost||0)}</td><td>${formatKES(o.businessExpenditure||0)}</td><td class="${((o.productCost||0)-(o.businessExpenditure||0))>=0?'profit-positive':'profit-negative'}">${formatKES((o.productCost||0)-(o.businessExpenditure||0))}</td><td><button class="delete-btn" data-id="${o.id}">Delete</button></td></tr>`).join('')}</tbody></table>`}</div></div></div>
             `;
             document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', async () => { 
-                    if(confirm('Delete this order?')) { 
-                        await deleteDoc(doc(db, ORDERS_COLLECTION, btn.dataset.id)); 
-                        showToast('Order has been removed', 'success', 'Order Deleted');
-                        showOrdersPage(); 
-                    } 
-                });
+                btn.onclick = async () => {
+                    if (confirm('Delete this order?')) {
+                        await deleteOrder(btn.dataset.id);
+                        showToast('Order deleted', 'success');
+                        showOrdersPage();
+                    }
+                };
             });
-            document.querySelectorAll('[data-page]').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    const page = link.dataset.page;
-                    if (page === 'dashboard') showDashboard();
-                    else if (page === 'orders') showOrdersPage();
-                    else if (page === 'register') showRegisterOrderPage();
-                    else if (page === 'addclient') showAddClientPage();
-                });
-            });
-            document.getElementById('logoutBtn')?.addEventListener('click', async () => { 
-                await signOut(auth);
-                showToast('You have been logged out', 'success', 'Logged Out');
-            });
+            attachNavHandlers();
+            document.getElementById('logoutBtn').onclick = () => signOut(auth);
         }
 
         async function showRegisterOrderPage() {
-            saveActivePage('register');
-            const clients = await loadClients();
-            const savedDraft = getOrderDraft();
-            const hasDraft = savedDraft && Object.values(savedDraft).some(v => v);
+            const clients = await getClients();
+            const clientOptions = Object.entries(clients).map(([id, c]) => `<option value="${id}">${c.name} (${c.number})</option>`).join('');
             
             document.getElementById('app').innerHTML = `
                 <nav class="navbar"><div class="logo"><h2><i class="fas fa-tshirt"></i> Earthmoney <span>Clothing</span></h2></div>
                 <div class="nav-links"><a data-page="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a><a data-page="orders"><i class="fas fa-shopping-bag"></i> Orders</a><a class="active" data-page="register"><i class="fas fa-plus-circle"></i> Register Order</a><a data-page="addclient"><i class="fas fa-user-plus"></i> Add Client</a></div>
                 <div class="user-info"><span><i class="fas fa-user"></i> ${currentUser?.displayName || currentUser?.email}</span><button id="logoutBtn" class="logout-btn">Logout</button></div></nav>
-                <div class="container"><div class="card">
-                    <h1>Register New Order ${hasDraft ? '<span class="draft-badge"><i class="fas fa-save"></i> Draft Auto-Saved</span>' : ''}</h1>
-                    ${hasDraft ? '<div class="restore-banner"><span><i class="fas fa-info-circle"></i> You have unsaved data from your last session</span><button id="clearDraftBannerBtn">Clear Draft</button></div>' : ''}
+                <div class="container"><div class="card"><h1>Register New Order</h1>
                     <form id="orderForm">
-                        <div class="form-group"><label>Order Number *</label><input type="text" id="orderNo" placeholder="e.g., ORD-001" value="${savedDraft?.orderNo || ''}" required></div>
-                        <div class="form-group"><label>Select Client</label><select id="clientSelect"><option value="">-- Walk-in Client --</option>${Object.entries(clients).map(([id,name]) => `<option value="${id}" ${savedDraft?.clientId === id ? 'selected' : ''}>${name}</option>`).join('')}</select></div>
-                        <div class="form-group"><label>Client Name (if not selected)</label><input type="text" id="clientNameRaw" placeholder="Enter client name" value="${savedDraft?.clientNameRaw || ''}"></div>
-                        <div class="form-group"><label>Delivery Date *</label><input type="date" id="deliveryDate" value="${savedDraft?.deliveryDate || ''}" required></div>
-                        <div class="form-row"><div class="form-group"><label>Product Cost (KES) *</label><input type="number" id="productCost" step="0.01" placeholder="Selling price" value="${savedDraft?.productCost || ''}" required></div>
-                        <div class="form-group"><label>Business Expenditure (KES) *</label><input type="number" id="expenditure" step="0.01" placeholder="Cost price" value="${savedDraft?.expenditure || ''}" required></div></div>
+                        <div class="form-group"><label>Order Number *</label><input type="text" id="orderNo" placeholder="e.g., ORD-001" required></div>
+                        <div class="form-group"><label>Select Client</label><select id="clientSelect"><option value="">-- Walk-in Client --</option>${clientOptions}</select></div>
+                        <div class="form-group"><label>Client Name (if not selected)</label><input type="text" id="clientNameRaw" placeholder="Enter client name"></div>
+                        <div class="form-group"><label>Delivery Date *</label><input type="date" id="deliveryDate" required></div>
+                        <div class="form-row"><div class="form-group"><label>Product Cost (KES) *</label><input type="number" id="productCost" step="0.01" placeholder="Selling price" required></div>
+                        <div class="form-group"><label>Business Expenditure (KES) *</label><input type="number" id="expenditure" step="0.01" placeholder="Cost price" required></div></div>
                         <div class="profit-preview"><label>Calculated Profit/Loss:</label><div id="profitPreview" class="profit-amount">KES 0</div></div>
-                        <button type="submit" class="submit-btn"><i class="fas fa-save"></i> Save Order</button>
+                        <button type="submit" class="submit-btn">Save Order</button>
                     </form></div></div>
             `;
             
-            // Calculate and display profit
-            const costInput = document.getElementById('productCost');
-            const expInput = document.getElementById('expenditure');
-            const profitPreview = document.getElementById('profitPreview');
+            const cost = document.getElementById('productCost'), exp = document.getElementById('expenditure'), preview = document.getElementById('profitPreview');
+            const updateProfit = () => {
+                const profit = (parseFloat(cost?.value)||0) - (parseFloat(exp?.value)||0);
+                if (preview) { preview.innerHTML = formatKES(profit); preview.style.color = profit >=0 ? '#10b981' : '#ef4444'; }
+            };
+            cost?.addEventListener('input', updateProfit);
+            exp?.addEventListener('input', updateProfit);
             
-            function updateProfit() {
-                const cost = parseFloat(costInput?.value) || 0;
-                const exp = parseFloat(expInput?.value) || 0;
-                const profit = cost - exp;
-                if (profitPreview) {
-                    profitPreview.innerHTML = formatKES(profit);
-                    profitPreview.style.color = profit >= 0 ? '#10b981' : '#ef4444';
-                }
-                // Auto-save to localStorage
-                const formData = {
-                    orderNo: document.getElementById('orderNo')?.value || '',
-                    clientId: document.getElementById('clientSelect')?.value || '',
-                    clientNameRaw: document.getElementById('clientNameRaw')?.value || '',
-                    deliveryDate: document.getElementById('deliveryDate')?.value || '',
-                    productCost: document.getElementById('productCost')?.value || '',
-                    expenditure: document.getElementById('expenditure')?.value || ''
-                };
-                saveOrderDraft(formData);
-            }
-            
-            // Add event listeners to all form fields
-            const formFields = ['orderNo', 'clientSelect', 'clientNameRaw', 'deliveryDate', 'productCost', 'expenditure'];
-            formFields.forEach(fieldId => {
-                const element = document.getElementById(fieldId);
-                if (element) {
-                    element.addEventListener('input', updateProfit);
-                    element.addEventListener('change', updateProfit);
-                }
-            });
-            
-            // Initial profit calculation
-            updateProfit();
-            
-            // Handle clear draft banner
-            const clearBannerBtn = document.getElementById('clearDraftBannerBtn');
-            if (clearBannerBtn) {
-                clearBannerBtn.addEventListener('click', () => {
-                    clearOrderDraft();
-                    showToast('Draft cleared successfully', 'info', 'Draft Removed');
-                    showRegisterOrderPage();
-                });
-            }
-            
-            // Form submission
-            document.getElementById('orderForm').addEventListener('submit', async (e) => {
+            document.getElementById('orderForm').onsubmit = async (e) => {
                 e.preventDefault();
                 const orderNo = document.getElementById('orderNo').value;
+                const clientId = document.getElementById('clientSelect').value || null;
+                const clientNameRaw = document.getElementById('clientNameRaw').value;
+                const deliveryDate = document.getElementById('deliveryDate').value;
                 const productCostVal = parseFloat(document.getElementById('productCost').value);
                 const expenditureVal = parseFloat(document.getElementById('expenditure').value);
                 const profitVal = productCostVal - expenditureVal;
                 
-                if (!orderNo || !productCostVal || !expenditureVal) {
-                    showToast('Please fill all required fields', 'error', 'Missing Information');
-                    return;
-                }
-                
-                await addDoc(collection(db, ORDERS_COLLECTION), {
-                    orderNo: orderNo,
-                    clientId: document.getElementById('clientSelect').value || null,
-                    clientNameRaw: document.getElementById('clientNameRaw').value || 'Guest',
-                    dateOfDelivery: document.getElementById('deliveryDate').value,
-                    productCost: productCostVal,
-                    businessExpenditure: expenditureVal,
-                    createdAt: new Date().toISOString()
+                if (!orderNo || !deliveryDate) return showToast('Please fill all required fields', 'error');
+                await addOrder({
+                    orderNo, clientId, clientNameRaw: clientId ? null : (clientNameRaw || 'Guest'),
+                    dateOfDelivery: deliveryDate, productCost: productCostVal, businessExpenditure: expenditureVal
                 });
-                
-                clearOrderDraft();
-                showToast(`Order #${orderNo} placed! Profit: ${formatKES(profitVal)}`, 'success', 'Order Placed Successfully!');
-                
-                setTimeout(() => {
-                    showOrdersPage();
-                }, 2000);
-            });
-            
-            document.querySelectorAll('[data-page]').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    const page = link.dataset.page;
-                    if (page === 'dashboard') showDashboard();
-                    else if (page === 'orders') showOrdersPage();
-                    else if (page === 'register') showRegisterOrderPage();
-                    else if (page === 'addclient') showAddClientPage();
-                });
-            });
-            document.getElementById('logoutBtn')?.addEventListener('click', async () => { 
-                await signOut(auth);
-                showToast('You have been logged out', 'success', 'Logged Out');
-            });
+                showToast(`Order #${orderNo} placed! Profit: ${formatKES(profitVal)}`, 'success', 'Order Placed!');
+                setTimeout(() => showOrdersPage(), 1500);
+            };
+            attachNavHandlers();
+            document.getElementById('logoutBtn').onclick = () => signOut(auth);
         }
 
         async function showAddClientPage() {
-            saveActivePage('addclient');
-            const savedDraft = getClientDraft();
-            const hasDraft = savedDraft && Object.values(savedDraft).some(v => v);
-            
             document.getElementById('app').innerHTML = `
                 <nav class="navbar"><div class="logo"><h2><i class="fas fa-tshirt"></i> Earthmoney <span>Clothing</span></h2></div>
                 <div class="nav-links"><a data-page="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a><a data-page="orders"><i class="fas fa-shopping-bag"></i> Orders</a><a data-page="register"><i class="fas fa-plus-circle"></i> Register Order</a><a class="active" data-page="addclient"><i class="fas fa-user-plus"></i> Add Client</a></div>
                 <div class="user-info"><span><i class="fas fa-user"></i> ${currentUser?.displayName || currentUser?.email}</span><button id="logoutBtn" class="logout-btn">Logout</button></div></nav>
-                <div class="container"><div class="card">
-                    <h1>Register New Client ${hasDraft ? '<span class="draft-badge"><i class="fas fa-save"></i> Draft Auto-Saved</span>' : ''}</h1>
-                    ${hasDraft ? '<div class="restore-banner"><span><i class="fas fa-info-circle"></i> You have unsaved data from your last session</span><button id="clearDraftBannerBtn">Clear Draft</button></div>' : ''}
+                <div class="container"><div class="card"><h1>Register New Client</h1>
                     <form id="clientForm">
-                        <div class="form-group"><label>Client Number *</label><input type="text" id="clientNumber" placeholder="e.g., CUST-001" value="${savedDraft?.clientNumber || ''}" required></div>
-                        <div class="form-group"><label>Full Name *</label><input type="text" id="fullName" placeholder="e.g., Jane Wanjiku" value="${savedDraft?.fullName || ''}" required></div>
-                        <div class="form-group"><label>Phone Number</label><input type="tel" id="phone" placeholder="+254 712 345 678" value="${savedDraft?.phone || ''}"></div>
-                        <div class="form-group"><label>Email (Optional)</label><input type="email" id="email" placeholder="client@example.com" value="${savedDraft?.email || ''}"></div>
-                        <button type="submit" class="submit-btn"><i class="fas fa-save"></i> Save Client</button>
+                        <div class="form-group"><label>Client Number *</label><input type="text" id="clientNumber" placeholder="e.g., CUST-001" required></div>
+                        <div class="form-group"><label>Full Name *</label><input type="text" id="fullName" placeholder="e.g., Jane Wanjiku" required></div>
+                        <div class="form-group"><label>Phone Number</label><input type="tel" id="phone" placeholder="+254 712 345 678"></div>
+                        <div class="form-group"><label>Email (Optional)</label><input type="email" id="email" placeholder="client@example.com"></div>
+                        <button type="submit" class="submit-btn">Save Client</button>
                     </form></div></div>
             `;
-            
-            // Auto-save function
-            function autoSaveClient() {
-                const formData = {
-                    clientNumber: document.getElementById('clientNumber')?.value || '',
-                    fullName: document.getElementById('fullName')?.value || '',
-                    phone: document.getElementById('phone')?.value || '',
-                    email: document.getElementById('email')?.value || ''
-                };
-                saveClientDraft(formData);
-            }
-            
-            // Add event listeners
-            const clientFields = ['clientNumber', 'fullName', 'phone', 'email'];
-            clientFields.forEach(fieldId => {
-                const element = document.getElementById(fieldId);
-                if (element) {
-                    element.addEventListener('input', autoSaveClient);
-                    element.addEventListener('change', autoSaveClient);
-                }
-            });
-            
-            // Handle clear draft banner
-            const clearBannerBtn = document.getElementById('clearDraftBannerBtn');
-            if (clearBannerBtn) {
-                clearBannerBtn.addEventListener('click', () => {
-                    clearClientDraft();
-                    showToast('Draft cleared successfully', 'info', 'Draft Removed');
-                    showAddClientPage();
-                });
-            }
-            
-            // Form submission
-            document.getElementById('clientForm').addEventListener('submit', async (e) => {
+            document.getElementById('clientForm').onsubmit = async (e) => {
                 e.preventDefault();
-                const clientNumber = document.getElementById('clientNumber').value;
-                const fullName = document.getElementById('fullName').value;
-                
-                if (!clientNumber || !fullName) {
-                    showToast('Please fill all required fields', 'error', 'Missing Information');
-                    return;
-                }
-                
-                await addDoc(collection(db, CLIENTS_COLLECTION), {
-                    clientNumber: clientNumber,
-                    clientName: fullName,
-                    phone: document.getElementById('phone').value || '',
-                    email: document.getElementById('email').value || '',
-                    createdAt: new Date().toISOString()
-                });
-                
-                clearClientDraft();
-                showToast(`Client ${fullName} registered successfully!`, 'success', 'Client Registered!');
-                
-                setTimeout(() => {
-                    showRegisterOrderPage();
-                }, 2000);
-            });
-            
+                const number = document.getElementById('clientNumber').value;
+                const name = document.getElementById('fullName').value;
+                if (!number || !name) return showToast('Please fill all required fields', 'error');
+                await addClient({ number, name, phone: document.getElementById('phone').value, email: document.getElementById('email').value });
+                showToast(`Client ${name} registered!`, 'success', 'Client Added!');
+                setTimeout(() => showRegisterOrderPage(), 1500);
+            };
+            attachNavHandlers();
+            document.getElementById('logoutBtn').onclick = () => signOut(auth);
+        }
+
+        function attachNavHandlers() {
             document.querySelectorAll('[data-page]').forEach(link => {
-                link.addEventListener('click', (e) => {
+                link.onclick = (e) => {
                     const page = link.dataset.page;
                     if (page === 'dashboard') showDashboard();
                     else if (page === 'orders') showOrdersPage();
                     else if (page === 'register') showRegisterOrderPage();
                     else if (page === 'addclient') showAddClientPage();
-                });
-            });
-            document.getElementById('logoutBtn')?.addEventListener('click', async () => { 
-                await signOut(auth);
-                showToast('You have been logged out', 'success', 'Logged Out');
+                };
             });
         }
     </script>
