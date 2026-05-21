@@ -239,7 +239,6 @@
 
         .stat-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .stat-icon {
@@ -292,10 +291,6 @@
             gap: 0.5rem;
         }
 
-        .card h2 i {
-            color: #667eea;
-        }
-
         /* Table Styles - FIXED */
         .table-container {
             overflow-x: auto;
@@ -311,11 +306,14 @@
 
         th {
             background: #f8fafc;
-            padding: 12px 16px;
+            padding: 14px 16px;
             text-align: left;
-            font-weight: 600;
+            font-weight: 700;
             color: #1e293b;
             border-bottom: 2px solid #e2e8f0;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
         }
 
         td {
@@ -334,12 +332,12 @@
 
         .profit-positive {
             color: #10b981;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .profit-negative {
             color: #ef4444;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .delivery-item {
@@ -354,14 +352,6 @@
             border-bottom: none;
         }
 
-        .delivery-item strong {
-            color: #1e3a2f;
-        }
-
-        .delivery-item small {
-            color: #6b7280;
-        }
-
         .form-group {
             margin-bottom: 1rem;
         }
@@ -373,19 +363,20 @@
             color: #374151;
         }
 
-        .form-group input, .form-group select {
+        .form-group input,
+        .form-group select {
             width: 100%;
             padding: 0.75rem;
             border: 1px solid #d1d5db;
             border-radius: 8px;
             font-size: 1rem;
-            transition: border-color 0.2s;
         }
 
-        .form-group input:focus, .form-group select:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .form-row {
@@ -403,11 +394,6 @@
             margin: 1rem 0;
         }
 
-        .profit-preview label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
         .profit-amount {
             font-size: 1.5rem;
             font-weight: 700;
@@ -423,7 +409,6 @@
             border-radius: 8px;
             font-size: 1rem;
             cursor: pointer;
-            transition: background 0.3s;
         }
 
         .submit-btn:hover {
@@ -438,7 +423,6 @@
             border-radius: 6px;
             cursor: pointer;
             font-size: 0.8rem;
-            transition: background 0.2s;
         }
 
         .delete-btn:hover {
@@ -457,6 +441,21 @@
             opacity: 0.5;
         }
 
+        .fix-data-btn {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .fix-data-btn:hover {
+            background: #d97706;
+        }
+
         /* Toast Notification */
         .toast-notification {
             position: fixed;
@@ -465,7 +464,7 @@
             background: white;
             border-radius: 12px;
             padding: 16px 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             display: flex;
             align-items: center;
             gap: 12px;
@@ -536,15 +535,12 @@
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
             .container {
                 padding: 0 1rem;
             }
             th, td {
                 padding: 8px 12px;
-                font-size: 12px;
+                font-size: 11px;
             }
         }
     </style>
@@ -556,7 +552,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getDatabase, ref, set, get, push, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, get, push, remove, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA6PKRSstZhiWFVDThYRktFQdf5BnPgX7w",
@@ -683,7 +679,20 @@
         async function getOrders() {
             const snapshot = await get(ref(db, 'orders'));
             const orders = snapshot.exists() ? snapshot.val() : {};
-            return Object.entries(orders).map(([id, data]) => ({ id, ...data }));
+            // Convert to array and ensure proper field mapping
+            return Object.entries(orders).map(([id, data]) => {
+                // Fix any misnamed fields
+                return {
+                    id: id,
+                    orderNo: data.orderNo || data.order_number || data.orderNum || id.slice(-6),
+                    clientId: data.clientId || null,
+                    clientNameRaw: data.clientNameRaw || data.client_name || data.clientName || 'Unknown',
+                    dateOfDelivery: data.dateOfDelivery || data.deliveryDate || data.date,
+                    productCost: parseFloat(data.productCost || data.revenue || data.cost || 0),
+                    businessExpenditure: parseFloat(data.businessExpenditure || data.expense || data.expenditure || 0),
+                    createdAt: data.createdAt || new Date().toISOString()
+                };
+            });
         }
 
         async function addClient(clientData) {
@@ -694,12 +703,66 @@
 
         async function addOrder(orderData) {
             const newRef = push(ref(db, 'orders'));
-            await set(newRef, { ...orderData, createdAt: new Date().toISOString() });
+            // Ensure correct field names
+            const cleanOrderData = {
+                orderNo: orderData.orderNo,
+                clientId: orderData.clientId || null,
+                clientNameRaw: orderData.clientNameRaw || 'Guest',
+                dateOfDelivery: orderData.dateOfDelivery,
+                productCost: parseFloat(orderData.productCost),
+                businessExpenditure: parseFloat(orderData.businessExpenditure),
+                createdAt: new Date().toISOString()
+            };
+            await set(newRef, cleanOrderData);
             return newRef.key;
         }
 
         async function deleteOrder(orderId) {
             await remove(ref(db, `orders/${orderId}`));
+        }
+
+        async function fixCorruptedData() {
+            // This function attempts to fix any corrupted data in the database
+            showToast('Checking and fixing data...', 'info', 'Please wait');
+            
+            const orders = await getOrders();
+            let fixedCount = 0;
+            
+            for (const order of orders) {
+                let needsFix = false;
+                const updates = {};
+                
+                // Fix orderNo if it looks like a date or is missing
+                if (!order.orderNo || order.orderNo.length < 3 || !isNaN(order.orderNo)) {
+                    updates.orderNo = `ORD-${order.id.slice(-6)}`;
+                    needsFix = true;
+                }
+                
+                // Fix productCost if it's missing or invalid
+                if (isNaN(order.productCost) || order.productCost === 0) {
+                    updates.productCost = 0;
+                    needsFix = true;
+                }
+                
+                // Fix businessExpenditure if missing
+                if (isNaN(order.businessExpenditure)) {
+                    updates.businessExpenditure = 0;
+                    needsFix = true;
+                }
+                
+                if (needsFix) {
+                    await set(ref(db, `orders/${order.id}`), { ...order, ...updates });
+                    fixedCount++;
+                }
+            }
+            
+            if (fixedCount > 0) {
+                showToast(`Fixed ${fixedCount} order(s) with incorrect data`, 'success', 'Data Fixed');
+            } else {
+                showToast('No corrupted data found', 'success', 'All Good');
+            }
+            
+            await showDashboard();
         }
 
         function saveActivePage(page) {
@@ -726,15 +789,20 @@
             
             let totalRevenue = 0, totalExpenditure = 0, totalProfit = 0;
             orders.forEach(o => {
-                totalRevenue += o.productCost || 0;
-                totalExpenditure += o.businessExpenditure || 0;
-                totalProfit += (o.productCost || 0) - (o.businessExpenditure || 0);
+                const revenue = o.productCost || 0;
+                const expense = o.businessExpenditure || 0;
+                totalRevenue += revenue;
+                totalExpenditure += expense;
+                totalProfit += revenue - expense;
             });
-            const profitMargin = totalRevenue > 0 ? ((totalProfit / totalRevenue) * 100).toFixed(1) : 0;
-            const today = new Date(); today.setHours(0,0,0,0);
-            const upcoming = orders.filter(o => o.dateOfDelivery && new Date(o.dateOfDelivery) >= today).slice(0,5);
             
-            // Sort orders by date (newest first) and get recent 10
+            const profitMargin = totalRevenue > 0 ? ((totalProfit / totalRevenue) * 100).toFixed(1) : 0;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const upcoming = orders.filter(o => o.dateOfDelivery && new Date(o.dateOfDelivery) >= today).slice(0, 5);
+            
+            // Sort orders by newest first
             const recentOrders = [...orders].sort((a, b) => {
                 const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
                 const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
@@ -760,6 +828,7 @@
                         <h1>Financial Dashboard</h1>
                         <p>Track your business performance in Kenyan Shillings (KES)</p>
                     </div>
+                    
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
@@ -790,21 +859,24 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="dashboard-grid">
                         <div class="card">
                             <h2><i class="fas fa-calendar-alt"></i> Upcoming Deliveries</h2>
-                            ${upcoming.length === 0 ? '<div class="empty-state"><i class="fas fa-calendar"></i><p>No upcoming deliveries</p></div>' : upcoming.map(o => `
-                                <div class="delivery-item">
-                                    <div>
-                                        <strong>${o.orderNo || o.id.slice(-6)}</strong><br>
-                                        <small>${clients[o.clientId]?.name || o.clientNameRaw || 'Walk-in'}</small>
+                            ${upcoming.length === 0 ? '<div class="empty-state"><i class="fas fa-calendar"></i><p>No upcoming deliveries</p></div>' : 
+                                upcoming.map(o => `
+                                    <div class="delivery-item">
+                                        <div>
+                                            <strong>${o.orderNo || o.id.slice(-6)}</strong><br>
+                                            <small>${clients[o.clientId]?.name || o.clientNameRaw || 'Walk-in'}</small>
+                                        </div>
+                                        <div>${o.dateOfDelivery ? new Date(o.dateOfDelivery).toLocaleDateString() : 'N/A'}</div>
+                                        <div class="${((o.productCost||0)-(o.businessExpenditure||0)) >= 0 ? 'profit-positive' : 'profit-negative'}">
+                                            ${formatKES((o.productCost||0)-(o.businessExpenditure||0))}
+                                        </div>
                                     </div>
-                                    <div>${new Date(o.dateOfDelivery).toLocaleDateString()}</div>
-                                    <div class="${((o.productCost||0)-(o.businessExpenditure||0)) >= 0 ? 'profit-positive' : 'profit-negative'}">
-                                        ${formatKES((o.productCost||0)-(o.businessExpenditure||0))}
-                                    </div>
-                                </div>
-                            `).join('')}
+                                `).join('')
+                            }
                         </div>
                         <div class="card">
                             <h2><i class="fas fa-chart-bar"></i> Performance Summary</h2>
@@ -824,8 +896,12 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="card">
-                        <h2><i class="fas fa-chart-line"></i> Recent Orders</h2>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h2><i class="fas fa-chart-line"></i> Recent Orders</h2>
+                            <button id="fixDataBtn" class="fix-data-btn"><i class="fas fa-wrench"></i> Fix Corrupted Data</button>
+                        </div>
                         <div class="table-container">
                             ${recentOrders.length === 0 ? 
                                 '<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>No orders yet. Click "Register Order" to create one.</p></div>' : 
@@ -858,18 +934,26 @@
                                             `;
                                         }).join('')}
                                     </tbody>
-                                </table>
-                            `}
+                                </table>`
+                            }
                         </div>
                     </div>
                 </div>
             `;
+            
             attachNavHandlers();
             document.getElementById('logoutBtn').onclick = async () => { 
                 await signOut(auth);
                 localStorage.removeItem('activePage');
                 showToast('Logged out successfully', 'success', 'Goodbye!');
             };
+            
+            const fixDataBtn = document.getElementById('fixDataBtn');
+            if (fixDataBtn) {
+                fixDataBtn.onclick = async () => {
+                    await fixCorruptedData();
+                };
+            }
         }
 
         async function showOrdersPage() {
@@ -877,7 +961,6 @@
             const orders = await getOrders();
             const clients = await getClients();
             
-            // Sort orders by newest first
             const sortedOrders = [...orders].sort((a, b) => {
                 const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
                 const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
@@ -904,7 +987,7 @@
                         <div class="table-container">
                             ${sortedOrders.length === 0 ? 
                                 '<div class="empty-state"><i class="fas fa-box-open"></i><p>No orders found. Click "Register Order" to create your first order.</p></div>' : 
-                                `</table>
+                                `<table>
                                     <thead>
                                         <tr>
                                             <th>ORDER NO</th>
@@ -935,8 +1018,8 @@
                                             `;
                                         }).join('')}
                                     </tbody>
-                                </table>
-                            `}
+                                </table>`
+                            }
                         </div>
                     </div>
                 </div>
@@ -1048,17 +1131,32 @@
                 const expenditureVal = parseFloat(document.getElementById('expenditure').value);
                 const profitVal = productCostVal - expenditureVal;
                 
-                if (!orderNo || !deliveryDate || !productCostVal || !expenditureVal) {
+                if (!orderNo || !deliveryDate || isNaN(productCostVal) || isNaN(expenditureVal)) {
                     showToast('Please fill all required fields', 'error', 'Missing Information');
                     return;
                 }
                 
                 await addOrder({
-                    orderNo, clientId, clientNameRaw: clientId ? null : (clientNameRaw || 'Guest'),
-                    dateOfDelivery: deliveryDate, productCost: productCostVal, businessExpenditure: expenditureVal
+                    orderNo: orderNo,
+                    clientId: clientId,
+                    clientNameRaw: clientId ? null : (clientNameRaw || 'Guest'),
+                    dateOfDelivery: deliveryDate,
+                    productCost: productCostVal,
+                    businessExpenditure: expenditureVal
                 });
+                
                 showToast(`Order #${orderNo} placed! ${profitVal >= 0 ? 'Profit' : 'Loss'}: ${formatKES(Math.abs(profitVal))}`, 'success', 'Order Placed!');
-                setTimeout(() => showOrdersPage(), 1500);
+                
+                // Reset form
+                document.getElementById('orderForm').reset();
+                if (preview) {
+                    preview.innerHTML = 'KES 0';
+                    preview.style.color = 'white';
+                }
+                
+                setTimeout(() => {
+                    showOrdersPage();
+                }, 1500);
             };
             
             attachNavHandlers();
@@ -1119,8 +1217,14 @@
                     showToast('Please fill all required fields', 'error', 'Missing Information');
                     return;
                 }
-                await addClient({ number, name, phone: document.getElementById('phone').value, email: document.getElementById('email').value });
+                await addClient({ 
+                    number: number, 
+                    name: name, 
+                    phone: document.getElementById('phone').value || '', 
+                    email: document.getElementById('email').value || '' 
+                });
                 showToast(`Client ${name} registered successfully!`, 'success', 'Client Added!');
+                document.getElementById('clientForm').reset();
                 setTimeout(() => showRegisterOrderPage(), 1500);
             };
             
