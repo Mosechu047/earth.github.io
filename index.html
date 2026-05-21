@@ -205,6 +205,20 @@
         }
 
         /* Dashboard Styles */
+        .welcome-section {
+            margin-bottom: 2rem;
+        }
+
+        .welcome-section h1 {
+            color: #1e3a2f;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-section p {
+            color: #4b5563;
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -220,6 +234,12 @@
             align-items: center;
             gap: 1rem;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .stat-icon {
@@ -239,7 +259,7 @@
 
         .stat-info h3 {
             font-size: 14px;
-            color: #666;
+            color: #6b7280;
             margin-bottom: 5px;
         }
 
@@ -251,7 +271,7 @@
 
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
             gap: 1.5rem;
             margin-bottom: 1.5rem;
         }
@@ -263,16 +283,83 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        .card h1 {
-            color: #1e3a2f;
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-
         .card h2 {
             color: #1e3a2f;
             margin-bottom: 1rem;
             font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card h2 i {
+            color: #667eea;
+        }
+
+        /* Table Styles - FIXED */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f8fafc;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #1e293b;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #334155;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .profit-positive {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .profit-negative {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .delivery-item {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .delivery-item:last-child {
+            border-bottom: none;
+        }
+
+        .delivery-item strong {
+            color: #1e3a2f;
+        }
+
+        .delivery-item small {
+            color: #6b7280;
         }
 
         .form-group {
@@ -289,9 +376,10 @@
         .form-group input, .form-group select {
             width: 100%;
             padding: 0.75rem;
-            border: 1px solid #ddd;
+            border: 1px solid #d1d5db;
             border-radius: 8px;
             font-size: 1rem;
+            transition: border-color 0.2s;
         }
 
         .form-group input:focus, .form-group select:focus {
@@ -304,7 +392,6 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
-            margin-bottom: 1rem;
         }
 
         .profit-preview {
@@ -316,9 +403,15 @@
             margin: 1rem 0;
         }
 
+        .profit-preview label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
         .profit-amount {
             font-size: 1.5rem;
             font-weight: 700;
+            margin-top: 0.25rem;
         }
 
         .submit-btn {
@@ -337,65 +430,14 @@
             background: #2f5e4a;
         }
 
-        .delivery-item {
-            padding: 0.75rem;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .profit-positive {
-            color: #10b981;
-            font-weight: 600;
-        }
-
-        .profit-negative {
-            color: #ef4444;
-            font-weight: 600;
-        }
-
-        .table-container {
-            overflow-x: auto;
-            border-radius: 12px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        th {
-            background: #f9fafb;
-            font-weight: 600;
-            color: #374151;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        td {
-            color: #4b5563;
-        }
-
-        tr:hover {
-            background: #f9fafb;
-        }
-
         .delete-btn {
             background: #ef4444;
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 0.8rem;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             transition: background 0.2s;
         }
 
@@ -403,11 +445,19 @@
             background: #dc2626;
         }
 
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
         }
 
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Toast Notification */
         .toast-notification {
             position: fixed;
             top: 20px;
@@ -432,10 +482,6 @@
             border-left: 4px solid #ef4444;
         }
 
-        .toast-notification.info {
-            border-left: 4px solid #0284c7;
-        }
-
         .toast-icon {
             font-size: 24px;
         }
@@ -446,10 +492,6 @@
 
         .toast-icon.error {
             color: #ef4444;
-        }
-
-        .toast-icon.info {
-            color: #0284c7;
         }
 
         .toast-content {
@@ -464,25 +506,13 @@
 
         .toast-message {
             font-size: 14px;
-            color: #666;
+            color: #6b7280;
         }
 
         .toast-close {
             cursor: pointer;
-            color: #999;
+            color: #9ca3af;
             font-size: 18px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: #6b7280;
-        }
-
-        .empty-state i {
-            font-size: 48px;
-            margin-bottom: 1rem;
-            opacity: 0.5;
         }
 
         @keyframes slideIn {
@@ -506,14 +536,15 @@
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
-            .toast-notification {
-                left: 20px;
-                right: 20px;
-                max-width: calc(100% - 40px);
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 0 1rem;
             }
             th, td {
-                padding: 0.75rem 0.5rem;
-                font-size: 0.85rem;
+                padding: 8px 12px;
+                font-size: 12px;
             }
         }
     </style>
@@ -553,7 +584,7 @@
             const toast = document.createElement('div');
             toast.className = `toast-notification ${type}`;
             toast.innerHTML = `
-                <div class="toast-icon ${type}"><i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i></div>
+                <div class="toast-icon ${type}"><i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i></div>
                 <div class="toast-content"><div class="toast-title">${title || titles[type]}</div><div class="toast-message">${message}</div></div>
                 <div class="toast-close"><i class="fas fa-times"></i></div>
             `;
@@ -562,18 +593,15 @@
             setTimeout(() => toast.remove(), 4000);
         }
 
-        // Check authentication state - redirect to login if not authenticated
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
             if (user) {
-                // User is logged in, show the app
                 const savedPage = localStorage.getItem('activePage') || 'dashboard';
                 if (savedPage === 'orders') showOrdersPage();
                 else if (savedPage === 'register') showRegisterOrderPage();
                 else if (savedPage === 'addclient') showAddClientPage();
                 else showDashboard();
             } else {
-                // User is not logged in, show login page
                 showLoginPage();
             }
         });
@@ -647,7 +675,6 @@
             };
         }
 
-        // Database operations
         async function getClients() {
             const snapshot = await get(ref(db, 'clients'));
             return snapshot.exists() ? snapshot.val() : {};
@@ -706,7 +733,13 @@
             const profitMargin = totalRevenue > 0 ? ((totalProfit / totalRevenue) * 100).toFixed(1) : 0;
             const today = new Date(); today.setHours(0,0,0,0);
             const upcoming = orders.filter(o => o.dateOfDelivery && new Date(o.dateOfDelivery) >= today).slice(0,5);
-            const recentOrders = [...orders].reverse().slice(0,10);
+            
+            // Sort orders by date (newest first) and get recent 10
+            const recentOrders = [...orders].sort((a, b) => {
+                const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+                const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+                return dateB - dateA;
+            }).slice(0, 10);
             
             document.getElementById('app').innerHTML = `
                 <nav class="navbar">
@@ -723,17 +756,112 @@
                     </div>
                 </nav>
                 <div class="container">
+                    <div class="welcome-section">
+                        <h1>Financial Dashboard</h1>
+                        <p>Track your business performance in Kenyan Shillings (KES)</p>
+                    </div>
                     <div class="stats-grid">
-                        <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h3>Total Revenue</h3><p class="stat-value">${formatKES(totalRevenue)}</p></div></div>
-                        <div class="stat-card"><div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div><div class="stat-info"><h3>Total Expenditure</h3><p class="stat-value">${formatKES(totalExpenditure)}</p></div></div>
-                        <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-simple"></i></div><div class="stat-info"><h3>Net Profit</h3><p class="stat-value" style="color: ${totalProfit>=0?'#10b981':'#ef4444'}">${formatKES(totalProfit)}</p></div></div>
-                        <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-pie"></i></div><div class="stat-info"><h3>Profit Margin</h3><p class="stat-value">${profitMargin}%</p></div></div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Revenue</h3>
+                                <p class="stat-value">${formatKES(totalRevenue)}</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Expenditure</h3>
+                                <p class="stat-value">${formatKES(totalExpenditure)}</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-chart-simple"></i></div>
+                            <div class="stat-info">
+                                <h3>Net Profit</h3>
+                                <p class="stat-value" style="color: ${totalProfit >= 0 ? '#10b981' : '#ef4444'}">${formatKES(totalProfit)}</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-chart-pie"></i></div>
+                            <div class="stat-info">
+                                <h3>Profit Margin</h3>
+                                <p class="stat-value">${profitMargin}%</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="dashboard-grid">
-                        <div class="card"><h2><i class="fas fa-calendar-alt"></i> Upcoming Deliveries</h2>${upcoming.map(o => `<div class="delivery-item"><div><strong>${o.orderNo || o.id.slice(-6)}</strong><br><small>${clients[o.clientId]?.name || o.clientNameRaw || 'Walk-in'}</small></div><div>${new Date(o.dateOfDelivery).toLocaleDateString()}</div><div class="${((o.productCost||0)-(o.businessExpenditure||0))>=0?'profit-positive':'profit-negative'}">${formatKES((o.productCost||0)-(o.businessExpenditure||0))}</div></div>`).join('') || '<p style="text-align:center;padding:2rem;">No upcoming deliveries</p>'}</div>
-                        <div class="card"><h2><i class="fas fa-chart-bar"></i> Performance Summary</h2><div><div style="display:flex;justify-content:space-between;padding:0.75rem 0"><span><strong>Total Orders:</strong></span><span>${orders.length}</span></div><div style="display:flex;justify-content:space-between;padding:0.75rem 0"><span><strong>Profitable Orders:</strong></span><span style="color:#10b981;">${orders.filter(o => (o.productCost||0) > (o.businessExpenditure||0)).length}</span></div><div style="display:flex;justify-content:space-between;padding:0.75rem 0"><span><strong>Loss Orders:</strong></span><span style="color:#ef4444;">${orders.filter(o => (o.productCost||0) < (o.businessExpenditure||0)).length}</span></div></div></div>
+                        <div class="card">
+                            <h2><i class="fas fa-calendar-alt"></i> Upcoming Deliveries</h2>
+                            ${upcoming.length === 0 ? '<div class="empty-state"><i class="fas fa-calendar"></i><p>No upcoming deliveries</p></div>' : upcoming.map(o => `
+                                <div class="delivery-item">
+                                    <div>
+                                        <strong>${o.orderNo || o.id.slice(-6)}</strong><br>
+                                        <small>${clients[o.clientId]?.name || o.clientNameRaw || 'Walk-in'}</small>
+                                    </div>
+                                    <div>${new Date(o.dateOfDelivery).toLocaleDateString()}</div>
+                                    <div class="${((o.productCost||0)-(o.businessExpenditure||0)) >= 0 ? 'profit-positive' : 'profit-negative'}">
+                                        ${formatKES((o.productCost||0)-(o.businessExpenditure||0))}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="card">
+                            <h2><i class="fas fa-chart-bar"></i> Performance Summary</h2>
+                            <div style="padding: 0.5rem 0;">
+                                <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #e5e7eb;">
+                                    <span><strong>Total Orders:</strong></span>
+                                    <span>${orders.length}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #e5e7eb;">
+                                    <span><strong>Profitable Orders:</strong></span>
+                                    <span style="color: #10b981;">${orders.filter(o => (o.productCost||0) > (o.businessExpenditure||0)).length}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.75rem 0;">
+                                    <span><strong>Loss Orders:</strong></span>
+                                    <span style="color: #ef4444;">${orders.filter(o => (o.productCost||0) < (o.businessExpenditure||0)).length}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card"><h2><i class="fas fa-chart-line"></i> Recent Orders</h2><div class="table-container">${recentOrders.length === 0 ? '<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>No orders yet</p></div>' : `<table><thead><tr><th>Order No</th><th>Client</th><th>Delivery Date</th><th>Revenue</th><th>Expense</th><th>Profit</th></tr></thead><tbody>${recentOrders.map(o => `<tr>}<strong>${o.orderNo || o.id.slice(-6)}</strong></td><td>${clients[o.clientId]?.name || o.clientNameRaw || 'Walk-in'}</td><td>${o.dateOfDelivery ? new Date(o.dateOfDelivery).toLocaleDateString() : 'N/A'}</td><td>${formatKES(o.productCost||0)}</td><td>${formatKES(o.businessExpenditure||0)}</td><td class="${((o.productCost||0)-(o.businessExpenditure||0))>=0?'profit-positive':'profit-negative'}">${formatKES((o.productCost||0)-(o.businessExpenditure||0))}</td></tr>`).join('')}</tbody></table>`}</div></div>
+                    <div class="card">
+                        <h2><i class="fas fa-chart-line"></i> Recent Orders</h2>
+                        <div class="table-container">
+                            ${recentOrders.length === 0 ? 
+                                '<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>No orders yet. Click "Register Order" to create one.</p></div>' : 
+                                `<table>
+                                    <thead>
+                                        <tr>
+                                            <th>ORDER NO</th>
+                                            <th>CLIENT</th>
+                                            <th>DELIVERY DATE</th>
+                                            <th>REVENUE (KES)</th>
+                                            <th>EXPENSE (KES)</th>
+                                            <th>PROFIT (KES)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${recentOrders.map(order => {
+                                            const revenue = order.productCost || 0;
+                                            const expense = order.businessExpenditure || 0;
+                                            const profit = revenue - expense;
+                                            const clientName = order.clientId ? (clients[order.clientId]?.name || 'Unknown') : (order.clientNameRaw || 'Walk-in');
+                                            return `
+                                                <tr>
+                                                    <td><strong>${order.orderNo || order.id.slice(-6)}</strong></td>
+                                                    <td>${clientName}</td>
+                                                    <td>${order.dateOfDelivery ? new Date(order.dateOfDelivery).toLocaleDateString() : 'N/A'}</td>
+                                                    <td>${formatKES(revenue)}</td>
+                                                    <td>${formatKES(expense)}</td>
+                                                    <td class="${profit >= 0 ? 'profit-positive' : 'profit-negative'}">${formatKES(profit)}</td>
+                                                </tr>
+                                            `;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            `}
+                        </div>
+                    </div>
                 </div>
             `;
             attachNavHandlers();
@@ -748,6 +876,13 @@
             saveActivePage('orders');
             const orders = await getOrders();
             const clients = await getClients();
+            
+            // Sort orders by newest first
+            const sortedOrders = [...orders].sort((a, b) => {
+                const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+                const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+                return dateB - dateA;
+            });
             
             document.getElementById('app').innerHTML = `
                 <nav class="navbar">
@@ -765,45 +900,37 @@
                 </nav>
                 <div class="container">
                     <div class="card">
-                        <h1><i class="fas fa-shopping-bag"></i> All Orders</h1>
+                        <h1 style="margin-bottom: 1.5rem;"><i class="fas fa-shopping-bag"></i> All Orders</h1>
                         <div class="table-container">
-                            ${orders.length === 0 ? 
+                            ${sortedOrders.length === 0 ? 
                                 '<div class="empty-state"><i class="fas fa-box-open"></i><p>No orders found. Click "Register Order" to create your first order.</p></div>' : 
-                                `<table>
+                                `</table>
                                     <thead>
                                         <tr>
-                                            <th>Order No</th>
-                                            <th>Client Name</th>
-                                            <th>Delivery Date</th>
-                                            <th>Product Cost (KES)</th>
-                                            <th>Expenditure (KES)</th>
-                                            <th>Profit/Loss (KES)</th>
-                                            <th>Action</th>
+                                            <th>ORDER NO</th>
+                                            <th>CLIENT</th>
+                                            <th>DELIVERY DATE</th>
+                                            <th>REVENUE (KES)</th>
+                                            <th>EXPENSE (KES)</th>
+                                            <th>PROFIT (KES)</th>
+                                            <th>ACTION</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        ${orders.map(order => {
+                                        ${sortedOrders.map(order => {
                                             const revenue = order.productCost || 0;
                                             const expense = order.businessExpenditure || 0;
                                             const profit = revenue - expense;
-                                            const clientName = order.clientId ? (clients[order.clientId]?.name || 'Unknown') : (order.clientNameRaw || 'Walk-in Customer');
+                                            const clientName = order.clientId ? (clients[order.clientId]?.name || 'Unknown') : (order.clientNameRaw || 'Walk-in');
                                             return `
                                                 <tr>
                                                     <td><strong>${order.orderNo || order.id.slice(-6)}</strong></td>
                                                     <td>${clientName}</td>
-                                                    <td>${order.dateOfDelivery ? new Date(order.dateOfDelivery).toLocaleDateString() : 'Not set'}</td>
+                                                    <td>${order.dateOfDelivery ? new Date(order.dateOfDelivery).toLocaleDateString() : 'N/A'}</td>
                                                     <td>${formatKES(revenue)}</td>
                                                     <td>${formatKES(expense)}</td>
-                                                    <td class="${profit >= 0 ? 'profit-positive' : 'profit-negative'}">
-                                                        <i class="fas ${profit >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'}"></i>
-                                                        ${formatKES(Math.abs(profit))}
-                                                        ${profit >= 0 ? 'Profit' : 'Loss'}
-                                                    </td>
-                                                    <td>
-                                                        <button class="delete-btn" data-id="${order.id}">
-                                                            <i class="fas fa-trash"></i> Delete
-                                                        </button>
-                                                    </td>
+                                                    <td class="${profit >= 0 ? 'profit-positive' : 'profit-negative'}">${formatKES(profit)}</td>
+                                                    <td><button class="delete-btn" data-id="${order.id}"><i class="fas fa-trash"></i> Delete</button></td>
                                                 </tr>
                                             `;
                                         }).join('')}
@@ -815,13 +942,12 @@
                 </div>
             `;
             
-            // Add delete functionality
             document.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.onclick = async () => {
-                    if (confirm('Are you sure you want to delete this order? This action cannot be undone.')) {
+                    if (confirm('Are you sure you want to delete this order?')) {
                         await deleteOrder(btn.dataset.id);
-                        showToast('Order deleted successfully', 'success', 'Deleted');
-                        showOrdersPage(); // Refresh the orders list
+                        showToast('Order deleted successfully', 'success');
+                        showOrdersPage();
                     }
                 };
             });
