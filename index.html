@@ -108,7 +108,6 @@
             font-size: 1.2rem;
         }
 
-        /* Overlay */
         .overlay {
             position: fixed;
             top: 0;
@@ -124,7 +123,6 @@
             display: block;
         }
 
-        /* Close button in side nav */
         .close-nav {
             position: absolute;
             top: 1rem;
@@ -136,7 +134,6 @@
             cursor: pointer;
         }
 
-        /* User info in side nav */
         .side-user-info {
             padding: 1rem 1.5rem;
             border-bottom: 1px solid #2f5e4a;
@@ -337,13 +334,17 @@
             margin-bottom: 1.5rem;
         }
 
-        .card h2 {
+        .card h1, .card h2 {
             color: #1e3a2f;
             margin-bottom: 1rem;
             font-size: 1.3rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+
+        .card h1 {
+            font-size: 1.8rem;
         }
 
         /* Forms */
@@ -358,7 +359,7 @@
             color: #374151;
         }
 
-        .form-group input, .form-group select {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 0.75rem;
             border: 1px solid #ddd;
@@ -393,41 +394,63 @@
             background: #ef4444;
             color: white;
             border: none;
-            padding: 0.3rem 0.7rem;
+            padding: 0.4rem 0.8rem;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 0.8rem;
         }
 
-        /* Tables */
+        .delete-btn:hover {
+            background: #dc2626;
+        }
+
+        /* Tables - FIXED */
         .table-container {
             overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #eee;
+            font-size: 14px;
         }
 
         th {
             background: #f8fafc;
-            font-weight: 600;
-            color: #374151;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 700;
+            color: #1e293b;
+            border-bottom: 2px solid #e2e8f0;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #334155;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: #f8fafc;
         }
 
         .profit-positive {
             color: #10b981;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .profit-negative {
             color: #ef4444;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         /* Month Filter */
@@ -473,6 +496,19 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
         /* Mobile Styles */
         @media (max-width: 768px) {
             .nav-links {
@@ -499,21 +535,20 @@
                 grid-template-columns: 1fr;
             }
             
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-            
             .stat-value {
                 font-size: 22px;
             }
             
             th, td {
-                padding: 0.5rem;
+                padding: 10px 12px;
                 font-size: 12px;
+            }
+            
+            th {
+                font-size: 10px;
             }
         }
 
-        /* Desktop */
         @media (min-width: 769px) {
             .side-nav, .overlay, .close-nav, .menu-btn {
                 display: none;
@@ -569,7 +604,6 @@
             setTimeout(() => toast.remove(), 4000);
         }
 
-        // Database operations
         async function getClients() {
             const snapshot = await get(ref(db, `${getUserPath()}/clients`));
             return snapshot.exists() ? snapshot.val() : {};
@@ -605,15 +639,18 @@
             localStorage.setItem('activePage', page);
         }
 
-        // Navigation functions
         function openSideNav() {
-            document.querySelector('.side-nav').classList.add('open');
-            document.querySelector('.overlay').classList.add('active');
+            const sideNav = document.querySelector('.side-nav');
+            const overlay = document.querySelector('.overlay');
+            if (sideNav) sideNav.classList.add('open');
+            if (overlay) overlay.classList.add('active');
         }
 
         function closeSideNav() {
-            document.querySelector('.side-nav').classList.remove('open');
-            document.querySelector('.overlay').classList.remove('active');
+            const sideNav = document.querySelector('.side-nav');
+            const overlay = document.querySelector('.overlay');
+            if (sideNav) sideNav.classList.remove('open');
+            if (overlay) overlay.classList.remove('active');
         }
 
         onAuthStateChanged(auth, (user) => {
@@ -695,61 +732,40 @@
         }
 
         function attachNavHandlers() {
-            // Desktop nav handlers
             document.querySelectorAll('.nav-links a, .side-nav a').forEach(link => {
+                if (link.id === 'sideLogoutBtn') return;
                 link.onclick = (e) => {
                     e.preventDefault();
                     const page = link.dataset.page;
+                    if (!page) return;
                     saveActivePage(page);
                     closeSideNav();
-                    if (page === 'addclient') showAddClientPage();
+                    if (page === 'dashboard') showDashboard();
+                    else if (page === 'addclient') showAddClientPage();
                     else if (page === 'register') showRegisterOrderPage();
                     else if (page === 'orders') showOrdersPage();
                     else if (page === 'clients') showClientsListPage();
-                    else if (page === 'dashboard') showDashboard();
                 };
             });
         }
 
-        async function showDashboard() {
-            saveActivePage('dashboard');
-            const clients = await getClients();
-            const orders = await getOrders();
-            
-            const filteredOrders = orders.filter(o => {
-                if (!o.createdAt) return false;
-                return o.createdAt.slice(0, 7) === currentMonthFilter;
-            });
-            
-            const totalRevenue = filteredOrders.reduce((sum, o) => sum + (o.productCost || 0), 0);
-            const totalExpenditure = filteredOrders.reduce((sum, o) => sum + (o.businessExpenditure || 0), 0);
-            const totalProfit = totalRevenue - totalExpenditure;
-            const profitMargin = totalRevenue > 0 ? ((totalProfit / totalRevenue) * 100).toFixed(1) : 0;
-            
-            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-            const currentMonthName = monthNames[parseInt(currentMonthFilter.slice(5, 7)) - 1] + ' ' + currentMonthFilter.slice(0, 4);
-            
-            const allTimeRevenue = orders.reduce((sum, o) => sum + (o.productCost || 0), 0);
-            const allTimeProfit = orders.reduce((sum, o) => sum + ((o.productCost || 0) - (o.businessExpenditure || 0)), 0);
-            
-            document.getElementById('app').innerHTML = `
+        function renderBaseLayout(content, activePage) {
+            return `
                 <nav class="navbar">
                     <div class="logo"><h2><i class="fas fa-tshirt"></i> Earthmoney <span>Clothing</span></h2></div>
                     <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
                     <div class="nav-links">
-                        <a class="active" data-page="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
-                        <a data-page="addclient"><i class="fas fa-user-plus"></i> Add Client</a>
-                        <a data-page="register"><i class="fas fa-plus-circle"></i> Register Order</a>
-                        <a data-page="orders"><i class="fas fa-shopping-bag"></i> Orders</a>
-                        <a data-page="clients"><i class="fas fa-users"></i> Clients</a>
+                        <a data-page="dashboard" class="${activePage === 'dashboard' ? 'active' : ''}"><i class="fas fa-chart-line"></i> Dashboard</a>
+                        <a data-page="addclient" class="${activePage === 'addclient' ? 'active' : ''}"><i class="fas fa-user-plus"></i> Add Client</a>
+                        <a data-page="register" class="${activePage === 'register' ? 'active' : ''}"><i class="fas fa-plus-circle"></i> Register Order</a>
+                        <a data-page="orders" class="${activePage === 'orders' ? 'active' : ''}"><i class="fas fa-shopping-bag"></i> Orders</a>
+                        <a data-page="clients" class="${activePage === 'clients' ? 'active' : ''}"><i class="fas fa-users"></i> Clients</a>
                     </div>
                     <div class="user-info">
                         <span><i class="fas fa-user"></i> ${currentUser?.displayName || currentUser?.email}</span>
                         <button id="logoutBtn" class="logout-btn">Logout</button>
                     </div>
                 </nav>
-                
-                <!-- Side Navigation for Mobile -->
                 <div class="side-nav">
                     <button class="close-nav" id="closeNav"><i class="fas fa-times"></i></button>
                     <div class="side-user-info">
@@ -764,85 +780,179 @@
                     <a id="sideLogoutBtn" style="margin-top: 2rem; border-top: 1px solid #2f5e4a;"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
                 <div class="overlay" id="overlay"></div>
-                
-                <div class="container">
-                    <div class="card">
-                        <h2><i class="fas fa-calendar-alt"></i> Monthly Tracking</h2>
-                        <div class="month-filter">
-                            <label>Select Month:</label>
-                            <input type="month" id="monthFilter" value="${currentMonthFilter}">
-                            <span style="color: #667eea;"><i class="fas fa-chart-line"></i> ${currentMonthName}</span>
-                        </div>
+                <div class="container">${content}</div>
+            `;
+        }
+
+        async function showDashboard() {
+            saveActivePage('dashboard');
+            const clients = await getClients();
+            const orders = await getOrders();
+            
+            const filteredOrders = orders.filter(o => o.createdAt && o.createdAt.slice(0, 7) === currentMonthFilter);
+            const totalRevenue = filteredOrders.reduce((sum, o) => sum + (o.productCost || 0), 0);
+            const totalExpenditure = filteredOrders.reduce((sum, o) => sum + (o.businessExpenditure || 0), 0);
+            const totalProfit = totalRevenue - totalExpenditure;
+            const profitMargin = totalRevenue > 0 ? ((totalProfit / totalRevenue) * 100).toFixed(1) : 0;
+            
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const currentMonthName = monthNames[parseInt(currentMonthFilter.slice(5, 7)) - 1] + ' ' + currentMonthFilter.slice(0, 4);
+            
+            const allTimeRevenue = orders.reduce((sum, o) => sum + (o.productCost || 0), 0);
+            const allTimeProfit = orders.reduce((sum, o) => sum + ((o.productCost || 0) - (o.businessExpenditure || 0)), 0);
+            
+            const content = `
+                <div class="card">
+                    <h2><i class="fas fa-calendar-alt"></i> Monthly Tracking</h2>
+                    <div class="month-filter">
+                        <label>Select Month:</label>
+                        <input type="month" id="monthFilter" value="${currentMonthFilter}">
+                        <span style="color: #667eea;"><i class="fas fa-chart-line"></i> ${currentMonthName}</span>
                     </div>
-                    
-                    <div class="stats-grid">
-                        <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h3>Monthly Revenue</h3><p class="stat-value">${formatKES(totalRevenue)}</p></div></div>
-                        <div class="stat-card"><div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div><div class="stat-info"><h3>Monthly Expenditure</h3><p class="stat-value">${formatKES(totalExpenditure)}</p></div></div>
-                        <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-simple"></i></div><div class="stat-info"><h3>Monthly Profit</h3><p class="stat-value" style="color: ${totalProfit >= 0 ? '#10b981' : '#ef4444'}">${formatKES(totalProfit)}</p></div></div>
-                        <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-pie"></i></div><div class="stat-info"><h3>Profit Margin</h3><p class="stat-value">${profitMargin}%</p></div></div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h3>Monthly Revenue</h3><p class="stat-value">${formatKES(totalRevenue)}</p></div></div>
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div><div class="stat-info"><h3>Monthly Expenditure</h3><p class="stat-value">${formatKES(totalExpenditure)}</p></div></div>
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-simple"></i></div><div class="stat-info"><h3>Monthly Profit</h3><p class="stat-value" style="color: ${totalProfit >= 0 ? '#10b981' : '#ef4444'}">${formatKES(totalProfit)}</p></div></div>
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-pie"></i></div><div class="stat-info"><h3>Profit Margin</h3><p class="stat-value">${profitMargin}%</p></div></div>
+                </div>
+                <div class="card">
+                    <h2><i class="fas fa-chart-line"></i> Monthly Orders (${filteredOrders.length})</h2>
+                    <div class="table-container">
+                        ${filteredOrders.length === 0 ? '<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>No orders for this month</p></div>' : `
+                            <table>
+                                <thead><tr><th>ORDER NO</th><th>CLIENT</th><th>DATE</th><th>REVENUE</th><th>EXPENSE</th><th>PROFIT</th></tr></thead>
+                                <tbody>
+                                    ${filteredOrders.map(o => {
+                                        const profit = (o.productCost||0) - (o.businessExpenditure||0);
+                                        const clientName = clients[o.clientId]?.name || o.clientNameRaw || 'Walk-in';
+                                        return `<tr>
+                                            <td><strong>${o.orderNo || o.id.slice(-6)}</strong></td>
+                                            <td>${clientName}</td>
+                                            <td>${new Date(o.createdAt).toLocaleDateString()}</td>
+                                            <td>${formatKES(o.productCost||0)}</td>
+                                            <td>${formatKES(o.businessExpenditure||0)}</td>
+                                            <td class="${profit >= 0 ? 'profit-positive' : 'profit-negative'}">${formatKES(profit)}</td>
+                                        </tr>`;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        `}
                     </div>
-                    
-                    <div class="card">
-                        <h2><i class="fas fa-chart-line"></i> Monthly Orders (${filteredOrders.length})</h2>
-                        <div class="table-container">
-                            ${filteredOrders.length === 0 ? '<p style="text-align:center;padding:2rem;">No orders for this month</p>' : `
-                                <table>
-                                    <thead><tr><th>Order No</th><th>Client</th><th>Date</th><th>Revenue</th><th>Expense</th><th>Profit</th></tr></thead>
-                                    <tbody>
-                                        ${filteredOrders.map(o => {
-                                            const profit = (o.productCost||0) - (o.businessExpenditure||0);
-                                            const clientName = clients[o.clientId]?.name || o.clientNameRaw || 'Walk-in';
-                                            return `<tr>
-                                                <td><strong>${o.orderNo}</strong></td>
-                                                <td>${clientName}</td>
-                                                <td>${new Date(o.createdAt).toLocaleDateString()}</td>
-                                                <td>${formatKES(o.productCost||0)}</td>
-                                                <td>${formatKES(o.businessExpenditure||0)}</td>
-                                                <td class="${profit >= 0 ? 'profit-positive' : 'profit-negative'}">${formatKES(profit)}</td>
-                                            </tr>`;
-                                        }).join('')}
-                                    </tbody>
-                                </table>
-                            `}
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <h2><i class="fas fa-chart-simple"></i> All Time Summary</h2>
-                        <div class="stats-grid" style="margin: 0;">
-                            <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h3>Total Revenue</h3><p class="stat-value">${formatKES(allTimeRevenue)}</p></div></div>
-                            <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-simple"></i></div><div class="stat-info"><h3>Total Profit</h3><p class="stat-value" style="color: ${allTimeProfit >= 0 ? '#10b981' : '#ef4444'}">${formatKES(allTimeProfit)}</p></div></div>
-                            <div class="stat-card"><div class="stat-icon"><i class="fas fa-shopping-bag"></i></div><div class="stat-info"><h3>Total Orders</h3><p class="stat-value">${orders.length}</p></div></div>
-                        </div>
+                </div>
+                <div class="card">
+                    <h2><i class="fas fa-chart-simple"></i> All Time Summary</h2>
+                    <div class="stats-grid" style="margin: 0;">
+                        <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h3>Total Revenue</h3><p class="stat-value">${formatKES(allTimeRevenue)}</p></div></div>
+                        <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-simple"></i></div><div class="stat-info"><h3>Total Profit</h3><p class="stat-value" style="color: ${allTimeProfit >= 0 ? '#10b981' : '#ef4444'}">${formatKES(allTimeProfit)}</p></div></div>
+                        <div class="stat-card"><div class="stat-icon"><i class="fas fa-shopping-bag"></i></div><div class="stat-info"><h3>Total Orders</h3><p class="stat-value">${orders.length}</p></div></div>
                     </div>
                 </div>
             `;
+            
+            document.getElementById('app').innerHTML = renderBaseLayout(content, 'dashboard');
             
             document.getElementById('monthFilter').onchange = (e) => {
                 currentMonthFilter = e.target.value;
                 showDashboard();
             };
             
-            // Mobile menu handlers
             document.getElementById('menuBtn').onclick = openSideNav;
-            document.getElementById('closeNav').onclick = closeSideNav;
-            document.getElementById('overlay').onclick = closeSideNav;
+            const closeBtn = document.getElementById('closeNav');
+            if (closeBtn) closeBtn.onclick = closeSideNav;
+            const overlay = document.getElementById('overlay');
+            if (overlay) overlay.onclick = closeSideNav;
             
             attachNavHandlers();
-            
             document.getElementById('logoutBtn').onclick = () => signOut(auth);
-            document.getElementById('sideLogoutBtn').onclick = () => signOut(auth);
+            const sideLogout = document.getElementById('sideLogoutBtn');
+            if (sideLogout) sideLogout.onclick = () => signOut(auth);
         }
 
-        // Other page functions (showAddClientPage, showRegisterOrderPage, showOrdersPage, showClientsListPage)
-        // These remain the same but need to include the side navigation structure
-        // [Previous implementations of these functions with updated navbar structure]
-        
-        // For brevity, I'll include the complete remaining functions in the final output
+        // Orders Page - FIXED TABLE
+        async function showOrdersPage() {
+            saveActivePage('orders');
+            const orders = await getOrders();
+            const clients = await getClients();
+            const sortedOrders = [...orders].sort((a, b) => {
+                const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+                const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+                return dateB - dateA;
+            });
+            
+            const content = `
+                <div class="card">
+                    <h1><i class="fas fa-shopping-bag"></i> All Orders</h1>
+                    <div class="table-container">
+                        ${sortedOrders.length === 0 ? '<div class="empty-state"><i class="fas fa-box-open"></i><p>No orders yet. Click "Register Order" to create your first order.</p></div>' : `
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ORDER NO</th>
+                                        <th>CLIENT</th>
+                                        <th>DELIVERY DATE</th>
+                                        <th>REVENUE (KES)</th>
+                                        <th>EXPENSE (KES)</th>
+                                        <th>PROFIT (KES)</th>
+                                        <th>ACTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${sortedOrders.map(order => {
+                                        const revenue = order.productCost || 0;
+                                        const expense = order.businessExpenditure || 0;
+                                        const profit = revenue - expense;
+                                        const clientName = order.clientId ? (clients[order.clientId]?.name || 'Unknown') : (order.clientNameRaw || 'Walk-in');
+                                        return `
+                                            <tr>
+                                                <td><strong>${order.orderNo || order.id.slice(-6)}</strong></td>
+                                                <td>${clientName}</td>
+                                                <td>${order.dateOfDelivery ? new Date(order.dateOfDelivery).toLocaleDateString() : 'Not set'}</td>
+                                                <td>${formatKES(revenue)}</td>
+                                                <td>${formatKES(expense)}</td>
+                                                <td class="${profit >= 0 ? 'profit-positive' : 'profit-negative'}">
+                                                    <i class="fas ${profit >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'}"></i>
+                                                    ${formatKES(Math.abs(profit))}
+                                                    ${profit >= 0 ? 'Profit' : 'Loss'}
+                                                </td>
+                                                <td><button class="delete-btn" data-id="${order.id}"><i class="fas fa-trash"></i> Delete</button></td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        `}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('app').innerHTML = renderBaseLayout(content, 'orders');
+            
+            document.getElementById('menuBtn').onclick = openSideNav;
+            const closeBtn = document.getElementById('closeNav');
+            if (closeBtn) closeBtn.onclick = closeSideNav;
+            const overlay = document.getElementById('overlay');
+            if (overlay) overlay.onclick = closeSideNav;
+            
+            attachNavHandlers();
+            document.getElementById('logoutBtn').onclick = () => signOut(auth);
+            const sideLogout = document.getElementById('sideLogoutBtn');
+            if (sideLogout) sideLogout.onclick = () => signOut(auth);
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.onclick = async () => {
+                    if (confirm('Delete this order?')) {
+                        await deleteOrder(btn.dataset.id);
+                        showToast('Order deleted', 'success');
+                        showOrdersPage();
+                    }
+                };
+            });
+        }
+
         async function showAddClientPage() {
             saveActivePage('addclient');
-            // ... (implementation with side nav)
-            renderWithNav(`
+            const content = `
                 <div class="card">
                     <h2><i class="fas fa-user-plus"></i> Register New Client</h2>
                     <form id="clientForm">
@@ -857,7 +967,20 @@
                         <button type="submit" class="submit-btn">Save Client</button>
                     </form>
                 </div>
-            `, 'addclient');
+            `;
+            
+            document.getElementById('app').innerHTML = renderBaseLayout(content, 'addclient');
+            
+            document.getElementById('menuBtn').onclick = openSideNav;
+            const closeBtn = document.getElementById('closeNav');
+            if (closeBtn) closeBtn.onclick = closeSideNav;
+            const overlay = document.getElementById('overlay');
+            if (overlay) overlay.onclick = closeSideNav;
+            
+            attachNavHandlers();
+            document.getElementById('logoutBtn').onclick = () => signOut(auth);
+            const sideLogout = document.getElementById('sideLogoutBtn');
+            if (sideLogout) sideLogout.onclick = () => signOut(auth);
             
             document.getElementById('clientForm').onsubmit = async (e) => {
                 e.preventDefault();
@@ -876,7 +999,7 @@
             const clients = await getClients();
             const clientOptions = Object.entries(clients).map(([id, c]) => `<option value="${id}">${c.name} (${c.number})</option>`).join('');
             
-            renderWithNav(`
+            const content = `
                 <div class="card">
                     <h2><i class="fas fa-clipboard-list"></i> Register New Order</h2>
                     <form id="orderForm">
@@ -895,7 +1018,20 @@
                         <button type="submit" class="submit-btn">Save Order</button>
                     </form>
                 </div>
-            `, 'register');
+            `;
+            
+            document.getElementById('app').innerHTML = renderBaseLayout(content, 'register');
+            
+            document.getElementById('menuBtn').onclick = openSideNav;
+            const closeBtn = document.getElementById('closeNav');
+            if (closeBtn) closeBtn.onclick = closeSideNav;
+            const overlay = document.getElementById('overlay');
+            if (overlay) overlay.onclick = closeSideNav;
+            
+            attachNavHandlers();
+            document.getElementById('logoutBtn').onclick = () => signOut(auth);
+            const sideLogout = document.getElementById('sideLogoutBtn');
+            if (sideLogout) sideLogout.onclick = () => signOut(auth);
             
             const cost = document.getElementById('productCost');
             const exp = document.getElementById('expenditure');
@@ -927,78 +1063,57 @@
             };
         }
 
-        async function showOrdersPage() {
-            saveActivePage('orders');
-            const orders = await getOrders();
-            const clients = await getClients();
-            const sortedOrders = [...orders].reverse();
-            
-            renderWithNav(`
-                <div class="card">
-                    <h2><i class="fas fa-shopping-bag"></i> All Orders</h2>
-                    <div class="table-container">
-                        ${sortedOrders.length === 0 ? '<p style="text-align:center;padding:2rem;">No orders yet</p>' : `
-                            </table>
-                                <thead><tr><th>Order No</th><th>Client</th><th>Delivery Date</th><th>Revenue</th><th>Expense</th><th>Profit</th><th>Action</th></tr></thead>
-                                <tbody>
-                                    ${sortedOrders.map(o => {
-                                        const profit = (o.productCost||0) - (o.businessExpenditure||0);
-                                        const clientName = clients[o.clientId]?.name || o.clientNameRaw || 'Walk-in';
-                                        return `<tr>
-                                            <td><strong>${o.orderNo}</strong></td>
-                                            <td>${clientName}</td>
-                                            <td>${o.dateOfDelivery ? new Date(o.dateOfDelivery).toLocaleDateString() : 'N/A'}</td>
-                                            <td>${formatKES(o.productCost||0)}</td>
-                                            <td>${formatKES(o.businessExpenditure||0)}</td>
-                                            <td class="${profit >= 0 ? 'profit-positive' : 'profit-negative'}">${formatKES(profit)}</td>
-                                            <td><button class="delete-btn" data-id="${o.id}">Delete</button></td>
-                                        </table>`;
-                                    }).join('')}
-                                </tbody>
-                            </table>
-                        `}
-                    </div>
-                </div>
-            `, 'orders');
-            
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.onclick = async () => {
-                    if (confirm('Delete this order?')) {
-                        await deleteOrder(btn.dataset.id);
-                        showToast('Order deleted', 'success');
-                        showOrdersPage();
-                    }
-                };
-            });
-        }
-
         async function showClientsListPage() {
             saveActivePage('clients');
             const clients = await getClients();
             const clientsArray = Object.entries(clients).map(([id, data]) => ({ id, ...data }));
             
-            renderWithNav(`
+            const content = `
                 <div class="card">
                     <h2><i class="fas fa-users"></i> All Clients (${clientsArray.length})</h2>
                     <div class="table-container">
-                        ${clientsArray.length === 0 ? '<p style="text-align:center;padding:2rem;">No clients yet. Click "Add Client" to create one.</p>' : `
+                        ${clientsArray.length === 0 ? '<div class="empty-state"><i class="fas fa-user-plus"></i><p>No clients yet. Click "Add Client" to create one.</p></div>' : `
                             <table>
-                                <thead><tr><th>Client Number</th><th>Name</th><th>Phone</th><th>Email</th><th>Joined</th><th>Action</th></tr></thead>
+                                <thead>
+                                    <tr>
+                                        <th>CLIENT NUMBER</th>
+                                        <th>NAME</th>
+                                        <th>PHONE</th>
+                                        <th>EMAIL</th>
+                                        <th>JOINED</th>
+                                        <th>ACTION</th>
+                                    </tr>
+                                </thead>
                                 <tbody>
-                                    ${clientsArray.map(c => `<tr>
-                                        <td><strong>${c.number}</strong></td>
-                                        <td>${c.name}</td>
-                                        <td>${c.phone || '-'}</td>
-                                        <td>${c.email || '-'}</td>
-                                        <td>${c.createdAt ? new Date(c.createdAt).toLocaleDateString() : '-'}</td>
-                                        <td><button class="delete-btn delete-client" data-id="${c.id}">Delete</button></td>
-                                    </tr>`).join('')}
+                                    ${clientsArray.map(c => `
+                                        <tr>
+                                            <td><strong>${c.number}</strong></td>
+                                            <td>${c.name}</td>
+                                            <td>${c.phone || '-'}</td>
+                                            <td>${c.email || '-'}</td>
+                                            <td>${c.createdAt ? new Date(c.createdAt).toLocaleDateString() : '-'}</td>
+                                            <td><button class="delete-btn delete-client" data-id="${c.id}">Delete</button></td>
+                                        </tr>
+                                    `).join('')}
                                 </tbody>
                             </table>
                         `}
                     </div>
                 </div>
-            `, 'clients');
+            `;
+            
+            document.getElementById('app').innerHTML = renderBaseLayout(content, 'clients');
+            
+            document.getElementById('menuBtn').onclick = openSideNav;
+            const closeBtn = document.getElementById('closeNav');
+            if (closeBtn) closeBtn.onclick = closeSideNav;
+            const overlay = document.getElementById('overlay');
+            if (overlay) overlay.onclick = closeSideNav;
+            
+            attachNavHandlers();
+            document.getElementById('logoutBtn').onclick = () => signOut(auth);
+            const sideLogout = document.getElementById('sideLogoutBtn');
+            if (sideLogout) sideLogout.onclick = () => signOut(auth);
             
             document.querySelectorAll('.delete-client').forEach(btn => {
                 btn.onclick = async () => {
@@ -1009,59 +1124,6 @@
                     }
                 };
             });
-        }
-
-        // Helper function to render pages with consistent navigation
-        function renderWithNav(content, activePage) {
-            document.getElementById('app').innerHTML = `
-                <nav class="navbar">
-                    <div class="logo"><h2><i class="fas fa-tshirt"></i> Earthmoney <span>Clothing</span></h2></div>
-                    <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
-                    <div class="nav-links">
-                        <a data-page="dashboard" class="${activePage === 'dashboard' ? 'active' : ''}"><i class="fas fa-chart-line"></i> Dashboard</a>
-                        <a data-page="addclient" class="${activePage === 'addclient' ? 'active' : ''}"><i class="fas fa-user-plus"></i> Add Client</a>
-                        <a data-page="register" class="${activePage === 'register' ? 'active' : ''}"><i class="fas fa-plus-circle"></i> Register Order</a>
-                        <a data-page="orders" class="${activePage === 'orders' ? 'active' : ''}"><i class="fas fa-shopping-bag"></i> Orders</a>
-                        <a data-page="clients" class="${activePage === 'clients' ? 'active' : ''}"><i class="fas fa-users"></i> Clients</a>
-                    </div>
-                    <div class="user-info">
-                        <span><i class="fas fa-user"></i> ${currentUser?.displayName || currentUser?.email}</span>
-                        <button id="logoutBtn" class="logout-btn">Logout</button>
-                    </div>
-                </nav>
-                
-                <div class="side-nav">
-                    <button class="close-nav" id="closeNav"><i class="fas fa-times"></i></button>
-                    <div class="side-user-info">
-                        <i class="fas fa-user-circle"></i>
-                        <span>${currentUser?.displayName || currentUser?.email}</span>
-                    </div>
-                    <a data-page="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
-                    <a data-page="addclient"><i class="fas fa-user-plus"></i> Add Client</a>
-                    <a data-page="register"><i class="fas fa-plus-circle"></i> Register Order</a>
-                    <a data-page="orders"><i class="fas fa-shopping-bag"></i> Orders</a>
-                    <a data-page="clients"><i class="fas fa-users"></i> Clients</a>
-                    <a id="sideLogoutBtn" style="margin-top: 2rem; border-top: 1px solid #2f5e4a;"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </div>
-                <div class="overlay" id="overlay"></div>
-                
-                <div class="container">
-                    ${content}
-                </div>
-            `;
-            
-            // Mobile menu handlers
-            document.getElementById('menuBtn').onclick = openSideNav;
-            const closeBtn = document.getElementById('closeNav');
-            if (closeBtn) closeBtn.onclick = closeSideNav;
-            const overlay = document.getElementById('overlay');
-            if (overlay) overlay.onclick = closeSideNav;
-            
-            attachNavHandlers();
-            
-            document.getElementById('logoutBtn').onclick = () => signOut(auth);
-            const sideLogout = document.getElementById('sideLogoutBtn');
-            if (sideLogout) sideLogout.onclick = () => signOut(auth);
         }
     </script>
 </body>
